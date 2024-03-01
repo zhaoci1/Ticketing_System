@@ -1,8 +1,10 @@
 package com.jiawa.train.member.controller;
 
+import com.jiawa.train.common.resp.AxiosResult;
+import com.jiawa.train.member.domain.Person;
+import com.jiawa.train.member.req.MemberReq;
 import com.jiawa.train.member.service.MemberService;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,11 +17,12 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping("/count")
-    public int count() {
-        return memberService.count();
+    public AxiosResult<Integer> count() {
+        return AxiosResult.success(memberService.count());
     }
+
     @PostMapping("/register")
-    public long register(String mobile) {
-        return memberService.register(mobile);
+    public AxiosResult register(MemberReq memberReq) {
+        return AxiosResult.success(memberReq.getMobile());
     }
 }
