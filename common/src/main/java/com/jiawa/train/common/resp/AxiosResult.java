@@ -42,6 +42,9 @@ public class AxiosResult<T> {
         return new AxiosResult<T>(enumStatus, data);
     }
 
+    public AxiosResult() {
+    }
+
     private AxiosResult(EnumStatus enumStatus, T data) {
         this.code = enumStatus.getCode();
         this.message = enumStatus.getMessage();

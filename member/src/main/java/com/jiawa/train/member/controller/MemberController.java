@@ -23,6 +23,6 @@ public class MemberController {
 
     @PostMapping("/register")
     public AxiosResult register(MemberReq memberReq) {
-        return AxiosResult.success(memberReq.getMobile());
+        return AxiosResult.success(memberService.register(memberReq));
     }
 }
