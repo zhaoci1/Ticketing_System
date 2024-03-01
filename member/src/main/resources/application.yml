@@ -2,3 +2,18 @@ server:
   port: 8001
   servlet:
     context-path: /member
+spring:
+  datasource:
+    username: train_member
+    url: jdbc:mysql://rm-7xv9s40yi6w07v136go.rwlb.rds.aliyuncs.com/train_member?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    password: 202019Cs
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+logging:
+  level:
+    com:
+      jiawa:
+        train:
+          member:
+            mapper: trace
