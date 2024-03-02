@@ -41,7 +41,8 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public AxiosResult exceptionHandler(BusinessException e) {
         AxiosResult commonResp = new AxiosResult();
-        LOG.error("业务异常：", e);
+//        括号为占位符
+        LOG.error("业务异常：{}", e.getE().getDesc());
         commonResp.setCode(201);
         commonResp.setMessage(e.getE().getDesc());
         return commonResp;
