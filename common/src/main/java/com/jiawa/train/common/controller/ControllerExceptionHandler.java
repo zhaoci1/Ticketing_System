@@ -31,4 +31,19 @@ public class ControllerExceptionHandler {
         commonResp.setMessage("系统出现异常，请联系管理员");
         return commonResp;
     }
+
+    /**
+     * 业务异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BusinessException.class)
+    @ResponseBody
+    public AxiosResult exceptionHandler(BusinessException e) {
+        AxiosResult commonResp = new AxiosResult();
+        LOG.error("业务异常：", e);
+        commonResp.setCode(201);
+        commonResp.setMessage(e.getE().getDesc());
+        return commonResp;
+    }
 }
