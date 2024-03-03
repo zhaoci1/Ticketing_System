@@ -47,4 +47,21 @@ public class ControllerExceptionHandler {
         commonResp.setMessage(e.getE().getDesc());
         return commonResp;
     }
+
+    /**
+     * 业务异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = BindException.class)
+    @ResponseBody
+    public AxiosResult exceptionHandler(BindException e) {
+        AxiosResult commonResp = new AxiosResult();
+        String defaultMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+//        括号为占位符
+        LOG.error("校验异常异常：{}", defaultMessage);
+        commonResp.setCode(201);
+        commonResp.setMessage(defaultMessage);
+        return commonResp;
+    }
 }
