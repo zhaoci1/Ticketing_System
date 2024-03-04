@@ -3,6 +3,7 @@ package com.jiawa.train.member.controller;
 import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.member.domain.Person;
 import com.jiawa.train.member.req.MemberReq;
+import com.jiawa.train.member.req.MemberSendCodeReq;
 import com.jiawa.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -24,7 +25,11 @@ public class MemberController {
 
     @PostMapping("/register")
     public AxiosResult register(@Valid MemberReq memberReq) {
-
         return AxiosResult.success(memberService.register(memberReq));
+    }
+    @PostMapping("/sendCode")
+    public AxiosResult sendCode(@Valid MemberSendCodeReq memberReq) {
+        memberService.sendCode(memberReq);
+        return AxiosResult.success("OK");
     }
 }
