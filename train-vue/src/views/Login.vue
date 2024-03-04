@@ -44,11 +44,12 @@
 <script>
 import { defineComponent, reactive } from "vue";
 import Axios from "@/api/loginApi";
+import axios from "axios";
 export default defineComponent({
   name: "login",
   setup() {
     const loginForm = reactive({
-      mobile: "",
+      mobile: "12345678909",
       code: "",
     });
     const onFinish = (values) => {
@@ -57,16 +58,16 @@ export default defineComponent({
     const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
     };
-    const login = () => {
-      Axios.login(loginForm).then(res=>{
+    const sendCode = () => {
+      Axios.sendCode(loginForm).then((res) => {
         console.log(res);
-      })
+      });
     };
     return {
       loginForm,
       onFinish,
       onFinishFailed,
-      login,
+      sendCode,
     };
   },
 });

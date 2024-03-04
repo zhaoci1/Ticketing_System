@@ -9,10 +9,7 @@ import com.jiawa.train.member.resp.MemberLoginResp;
 import com.jiawa.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/member")
@@ -31,7 +28,7 @@ public class MemberController {
     }
 
     @PostMapping("/sendCode")
-    public AxiosResult sendCode(@Valid MemberSendCodeReq memberReq) {
+    public AxiosResult sendCode(@Valid @RequestBody MemberSendCodeReq memberReq) {
         memberService.sendCode(memberReq);
         return AxiosResult.success("OK");
     }
