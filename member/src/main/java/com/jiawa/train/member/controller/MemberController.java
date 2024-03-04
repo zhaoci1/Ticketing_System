@@ -24,6 +24,7 @@ public class MemberController {
 
     @PostMapping("/register")
     public AxiosResult register(@Valid MemberReq memberReq) {
+
         return AxiosResult.success(memberService.register(memberReq));
     }
 }
