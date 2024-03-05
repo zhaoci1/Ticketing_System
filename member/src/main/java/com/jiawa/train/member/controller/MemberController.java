@@ -29,12 +29,13 @@ public class MemberController {
 
     @PostMapping("/sendCode")
     public AxiosResult sendCode(@Valid @RequestBody MemberSendCodeReq memberReq) {
-        memberService.sendCode(memberReq);
-        return AxiosResult.success("OK");
+        String code = memberService.sendCode(memberReq);
+        return AxiosResult.success(code);
     }
 
     @PostMapping("/login")
-    public AxiosResult login(@Valid MemberLoginReq memberReq) {
+    public AxiosResult login(@Valid @RequestBody MemberLoginReq memberReq) {
+        System.out.println(memberReq);
         return AxiosResult.success(memberService.login(memberReq));
     }
 }

@@ -20,7 +20,6 @@ public class AxiosResult<T> {
     }
 
     public T getData() {
-        System.out.println("get方法被调用了");
         return data;
     }
 

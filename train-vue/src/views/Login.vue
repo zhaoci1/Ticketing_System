@@ -30,7 +30,6 @@
                 <a @click="sendCode">获取验证码</a>
               </template>
             </a-input>
-            <!--<a-input v-model:value="loginForm.code" placeholder="验证码"/>-->
           </a-form-item>
 
           <a-form-item>
@@ -43,8 +42,8 @@
 </template>
 <script>
 import { defineComponent, reactive } from "vue";
+import { message } from "ant-design-vue";
 import Axios from "@/api/loginApi";
-import axios from "axios";
 export default defineComponent({
   name: "login",
   setup() {
@@ -60,10 +59,21 @@ export default defineComponent({
     };
     const sendCode = () => {
       Axios.sendCode(loginForm).then((res) => {
+        if(res.code==200){
+          message.success("验证码已发送")
+          loginForm.code = res.data
+        }else{
+          message.error("验证码获取失败!")
+        }
+      });
+    };
+    const login = () => {
+      Axios.login(loginForm).then((res) => {
         console.log(res);
       });
     };
     return {
+      login,
       loginForm,
       onFinish,
       onFinishFailed,

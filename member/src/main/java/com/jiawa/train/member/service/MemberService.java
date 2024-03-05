@@ -28,6 +28,8 @@ public class MemberService {
     @Resource
     private MemberMapper memberMapper;
 
+    private String code;
+
     public int count() {
         return Math.toIntExact(memberMapper.countByExample(null));
     }
@@ -46,7 +48,7 @@ public class MemberService {
         return AxiosResult.success(member);
     }
 
-    public void sendCode(MemberSendCodeReq req) {
+    public String sendCode(MemberSendCodeReq req) {
         String mobile = req.getMobile();
         Member memberDB = selectByMembers(mobile);
 
@@ -62,12 +64,13 @@ public class MemberService {
         }
 
 //        生成验证码
-        String code = RandomUtil.randomString(4);
+        code = RandomUtil.randomString(4);
         Log.info("生成短信验证码：{}", code);
 //        保存短信记录表：手机号，短信验证码，有效期，是否已使用,业务类型，发送时间，使用时间
         Log.info("生成短信验证表");
         //        对接短信通道，发送短信
         Log.info("对接短信通道");
+        return code;
     }
 
     public MemberLoginResp login(MemberLoginReq req) {
@@ -78,7 +81,7 @@ public class MemberService {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_NOT_EXIST);
         }
 //        校验短信验证码
-        if (!"8888".equals(req.getCode())) {
+        if (!code.equals(req.getCode())) {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_CODE_ERROR);
         }
 

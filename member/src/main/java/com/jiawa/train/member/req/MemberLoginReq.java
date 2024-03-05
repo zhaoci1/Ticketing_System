@@ -27,5 +27,11 @@ public class MemberLoginReq {
         this.code = code;
     }
 
-
+    @Override
+    public String toString() {
+        return "MemberLoginReq{" +
+                "mobile='" + mobile + '\'' +
+                ", code='" + code + '\'' +
+                '}';
+    }
 }
