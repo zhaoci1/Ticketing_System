@@ -44,9 +44,11 @@
 import { defineComponent, reactive } from "vue";
 import { message } from "ant-design-vue";
 import Axios from "@/api/loginApi";
+import { useRouter } from "vue-router";
 export default defineComponent({
   name: "login",
   setup() {
+    const router = useRouter();
     const loginForm = reactive({
       mobile: "12345678909",
       code: "",
@@ -58,19 +60,23 @@ export default defineComponent({
       console.log("Failed:", errorInfo);
     };
     const sendCode = () => {
-      console.log(process.env.VUE_APP_SERVER);
       Axios.sendCode(loginForm).then((res) => {
-        if(res.code==200){
-          message.success("验证码已发送")
-          loginForm.code = res.data
-        }else{
-          message.error("验证码获取失败!")
+        if (res.code == 200) {
+          message.success("验证码已发送");
+          loginForm.code = res.data;
+        } else {
+          message.error("验证码获取失败!");
         }
       });
     };
     const login = () => {
       Axios.login(loginForm).then((res) => {
-        console.log(res);
+        if (res.code == 200) {
+          message.success("登录成功");
+          router.push("/main");
+        } else {
+          message.error("登录失败!");
+        }
       });
     };
     return {
@@ -79,6 +85,7 @@ export default defineComponent({
       onFinish,
       onFinishFailed,
       sendCode,
+      router,
     };
   },
 });
