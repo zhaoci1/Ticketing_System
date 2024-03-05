@@ -8,6 +8,7 @@ import cn.hutool.jwt.JWTUtil;
 import com.jiawa.train.common.exception.BusinessException;
 import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.AxiosResult;
+import com.jiawa.train.common.util.JwtUtil;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Member;
 import com.jiawa.train.member.domain.MemberExample;
@@ -89,11 +90,9 @@ public class MemberService {
 
         MemberLoginResp memberLoginResp = BeanUtil.copyProperties(memberDB, MemberLoginResp.class);
 
-        Map<String, Object> map = BeanUtil.beanToMap(memberLoginResp);
-        String key = "Jiawa12306";
-        String token = JWTUtil.createToken(map, key.getBytes());
-        memberLoginResp.setToken(token);
-        System.out.println(memberLoginResp);
+        memberLoginResp.setToken(JwtUtil.createToken(memberLoginResp.getId()
+                , memberLoginResp.getMobile()));
+
         return memberLoginResp;
     }
 

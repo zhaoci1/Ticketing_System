@@ -3,10 +3,10 @@
     <a-layout-header class="header">
       <TheHeaderView></TheHeaderView>
       <a-menu
-          v-model:selectedKeys="selectedKeys1"
-          theme="dark"
-          mode="horizontal"
-          :style="{ lineHeight: '64px' }"
+        v-model:selectedKeys="selectedKeys1"
+        theme="dark"
+        mode="horizontal"
+        :style="{ lineHeight: '64px' }"
       >
         <a-menu-item key="1">nav 1</a-menu-item>
         <a-menu-item key="2">nav 2</a-menu-item>
@@ -22,7 +22,7 @@
           <a-breadcrumb-item>App</a-breadcrumb-item>
         </a-breadcrumb>
         <a-layout-content
-            :style="{
+          :style="{
             background: '#fff',
             padding: '24px',
             margin: 0,
@@ -41,19 +41,24 @@ import {
   LaptopOutlined,
   NotificationOutlined,
 } from "@ant-design/icons-vue";
-import {defineComponent, ref} from "vue";
+import { defineComponent, ref } from "vue";
 import TheHeaderView from "@/components/the-header";
 import TheSiderView from "@/components/the-sider.vue";
+import store from "@/store";
 
 export default defineComponent({
   components: {
     TheSiderView,
-    TheHeaderView
+    TheHeaderView,
   },
   setup() {
+    
     return {
       // collapsed: ref(false),
     };
+  },
+  mounted() {
+    console.log(store.state.member.token);
   },
 });
 </script>

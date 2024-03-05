@@ -45,6 +45,7 @@ import { defineComponent, reactive } from "vue";
 import { message } from "ant-design-vue";
 import Axios from "@/api/loginApi";
 import { useRouter } from "vue-router";
+import store from "@/store";
 export default defineComponent({
   name: "login",
   setup() {
@@ -74,6 +75,7 @@ export default defineComponent({
         if (res.code == 200) {
           message.success("登录成功");
           console.log(res);
+          store.commit("setMember",res.data)
           router.push("/main");
         } else {
           message.error("登录失败!");

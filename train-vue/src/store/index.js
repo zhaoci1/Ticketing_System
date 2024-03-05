@@ -1,14 +1,17 @@
-import { createStore } from 'vuex'
+import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    member: {},
   },
-  getters: {
-  },
+  getters: {},
+  // 同步方法
   mutations: {
+    setMember(state, member) {
+      state.member = member;
+    },
   },
-  actions: {
-  },
-  modules: {
-  }
-})
+  // 异步任务
+  actions: {},
+  modules: {},
+});
