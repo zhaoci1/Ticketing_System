@@ -52,10 +52,7 @@ export default defineComponent({
     TheHeaderView,
   },
   setup() {
-    
-    return {
-      // collapsed: ref(false),
-    };
+    return {};
   },
   mounted() {
     console.log(store.state.member.token);
