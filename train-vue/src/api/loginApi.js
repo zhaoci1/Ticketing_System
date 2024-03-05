@@ -7,7 +7,6 @@ let Axios = {
     });
   },
   login(loginForm) {
-    console.log(loginForm);
     return myAxios.post("member/member/login", loginForm);
   },
 };

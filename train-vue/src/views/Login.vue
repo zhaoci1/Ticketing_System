@@ -73,6 +73,7 @@ export default defineComponent({
       Axios.login(loginForm).then((res) => {
         if (res.code == 200) {
           message.success("登录成功");
+          console.log(res);
           router.push("/main");
         } else {
           message.error("登录失败!");

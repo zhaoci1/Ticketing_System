@@ -35,7 +35,6 @@ public class MemberController {
 
     @PostMapping("/login")
     public AxiosResult login(@Valid @RequestBody MemberLoginReq memberReq) {
-        System.out.println(memberReq);
         return AxiosResult.success(memberService.login(memberReq));
     }
 }
