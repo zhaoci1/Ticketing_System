@@ -58,6 +58,7 @@ export default defineComponent({
       console.log("Failed:", errorInfo);
     };
     const sendCode = () => {
+      console.log(process.env.VUE_APP_SERVER);
       Axios.sendCode(loginForm).then((res) => {
         if(res.code==200){
           message.success("验证码已发送")

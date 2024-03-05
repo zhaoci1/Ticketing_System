@@ -2,7 +2,7 @@ import axios from "axios";
 
 let myAxios = axios.create({
   // 设置统一请求路径前缀
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: process.env.VUE_APP_SERVER,
   timeout: 3000,
   headers: { "X-Custom-Header": "foobar" },
   ContentType: "application/json",
