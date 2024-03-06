@@ -12,7 +12,7 @@
         <property name="endingDelimiter" value="`"/>
 
         <!--覆盖生成XML文件-->
-        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
         <!-- 生成的实体类添加toString()方法 -->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
 
@@ -40,9 +40,6 @@
         <javaClientGenerator targetProject="../member/src/main/java"
                              targetPackage="com.jiawa.train.member.mapper"
                              type="XMLMAPPER"/>
-
-<!--        有几张表就写几个table标签-->
-        <table tableName="member" domainObjectName="Member"/>
-        <table tableName="passenger" domainObjectName="Passenger"/>
+        <table tableName="confirm_order" domainObjectName="ConfirmOrder"/>
     </context>
 </generatorConfiguration>
