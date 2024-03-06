@@ -9,6 +9,9 @@ let Axios = {
   login(loginForm) {
     return myAxios.post("member/member/login", loginForm);
   },
+  getCount() {
+    return myAxios.get("member/member/count");
+  },
 };
 
 export default Axios;

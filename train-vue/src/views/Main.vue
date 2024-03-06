@@ -45,6 +45,7 @@ import { defineComponent, ref } from "vue";
 import TheHeaderView from "@/components/the-header";
 import TheSiderView from "@/components/the-sider.vue";
 import store from "@/store";
+import Axios from "@/api/loginApi";
 
 export default defineComponent({
   components: {
@@ -52,7 +53,17 @@ export default defineComponent({
     TheHeaderView,
   },
   setup() {
-    return {};
+    const count = ref();
+    Axios.getCount().then((res) => {
+      if (res.code == 200) {
+        count.value = res.data.count
+      } else {
+        message.error("登录失败!");
+      }
+    });
+    return {
+      count
+    };
   },
   mounted() {
     console.log(store.state.member.token);
