@@ -18,6 +18,12 @@ const routes = [
       loginRequire: true,
     },
   },
+  {
+    path: "/main",
+    name: "main",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Main.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -34,6 +40,7 @@ router.beforeEach((to, from, next) => {
   ) {
     const member = store.state.member;
     console.log("页面登录校验开始：", member);
+    // token不存在则表示未登录或者超时
     if (!member.token) {
       console.log("用户未登录或者登录超时！");
       notification.error({ description: "未登录或登录超时" });
