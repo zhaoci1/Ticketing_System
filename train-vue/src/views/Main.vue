@@ -1,37 +1,13 @@
 <template>
   <a-layout id="components-layout-demo-top-side-2">
-    <a-layout-header class="header">
-      <TheHeaderView></TheHeaderView>
-      <a-menu
-        v-model:selectedKeys="selectedKeys1"
-        theme="dark"
-        mode="horizontal"
-        :style="{ lineHeight: '64px' }"
-      >
-        <a-menu-item key="1">nav 1</a-menu-item>
-        <a-menu-item key="2">nav 2</a-menu-item>
-        <a-menu-item key="3">nav 3</a-menu-item>
-      </a-menu>
-    </a-layout-header>
+    <TheHeaderView></TheHeaderView>
     <a-layout>
       <the-sider-view></the-sider-view>
-      <a-layout style="padding: 0 24px 24px">
-        <a-breadcrumb style="margin: 16px 0">
-          <a-breadcrumb-item>Home</a-breadcrumb-item>
-          <a-breadcrumb-item>List</a-breadcrumb-item>
-          <a-breadcrumb-item>App</a-breadcrumb-item>
-        </a-breadcrumb>
-        <a-layout-content
-          :style="{
-            background: '#fff',
-            padding: '24px',
-            margin: 0,
-            minHeight: '280px',
-          }"
-        >
-          Content
-        </a-layout-content>
-      </a-layout>
+     <a-layout-content :style="{
+      background:'#fff',padding:'20px'
+     }">
+     <router-view></router-view>
+     </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
@@ -56,7 +32,7 @@ export default defineComponent({
     const count = ref();
     Axios.getCount().then((res) => {
       if (res.code == 200) {
-        count.value = res.data.count
+        count.value = res.data
       } else {
         message.error("登录失败!");
       }

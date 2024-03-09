@@ -76,7 +76,7 @@ export default defineComponent({
           message.success("登录成功");
           console.log(res);
           store.commit("setMember",res.data)
-          router.push("/main");
+          router.push("/welcome");
         } else {
           message.error("登录失败!");
         }

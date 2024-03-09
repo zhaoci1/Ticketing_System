@@ -17,6 +17,16 @@ const routes = [
     meta: {
       loginRequire: true,
     },
+    children:[
+      {
+        path:"welcome",
+        component: () =>import( "../views/main/Welcome.vue"),
+    },
+    ]
+  },
+  {
+    path: "",
+    redirect: '/welcome'
   },
   {
     path: "/main",
