@@ -7,6 +7,7 @@ import com.jiawa.train.member.req.PassengerReq;
 import com.jiawa.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,5 +27,11 @@ public class PassengerController {
     public AxiosResult queryList(@Valid PassengerQuery req) {
         req.setMemberId(LoginMemberContext.getId());
         return AxiosResult.success(passengerService.queryList(req));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public AxiosResult deletePassenger(@PathVariable Long id) {
+        passengerService.delete(id);
+        return AxiosResult.success("ok");
     }
 }
