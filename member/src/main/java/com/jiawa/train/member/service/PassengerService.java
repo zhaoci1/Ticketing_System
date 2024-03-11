@@ -27,19 +27,28 @@ public class PassengerService {
 
     /**
      * 新增乘车人
+     *
      * @param req
      * @return
      */
     public int save(PassengerReq req) {
         DateTime now = DateTime.now();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
-//        获取当前登录的会员id
-        passenger.setMemberId(LoginMemberContext.getId());
-        passenger.setId(SnowUtil.getSnowflakeNextId());
-        passenger.setCreateTime(now);
-        passenger.setUpdateTime(now);
-        int insert = passengerMapper.insert(passenger);
-        return insert;
+        int state;
+
+        if (ObjectUtil.isNull(passenger.getId())) {
+            //        获取当前登录的会员id
+            passenger.setMemberId(LoginMemberContext.getId());
+            passenger.setId(SnowUtil.getSnowflakeNextId());
+            passenger.setCreateTime(now);
+            passenger.setUpdateTime(now);
+            state = passengerMapper.insert(passenger);
+        } else {
+            passenger.setUpdateTime(now);
+            state = passengerMapper.updateByPrimaryKey(passenger);
+        }
+
+        return state;
     }
 
     public PageResp<PassengerQueryResp> queryList(PassengerQuery req) {
