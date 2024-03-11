@@ -3,11 +3,14 @@
     <TheHeaderView></TheHeaderView>
     <a-layout>
       <the-sider-view></the-sider-view>
-     <a-layout-content :style="{
-      background:'#fff',padding:'20px'
-     }">
-     <router-view></router-view>
-     </a-layout-content>
+      <a-layout-content
+        :style="{
+          background: '#fff',
+          padding: '20px',
+        }"
+      >
+        <router-view></router-view>
+      </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
@@ -28,22 +31,7 @@ export default defineComponent({
     TheSiderView,
     TheHeaderView,
   },
-  setup() {
-    const count = ref();
-    Axios.getCount().then((res) => {
-      if (res.code == 200) {
-        count.value = res.data
-      } else {
-        message.error("登录失败!");
-      }
-    });
-    return {
-      count
-    };
-  },
-  mounted() {
-    console.log(store.state.member.token);
-  },
+  setup() {},
 });
 </script>
 <style>

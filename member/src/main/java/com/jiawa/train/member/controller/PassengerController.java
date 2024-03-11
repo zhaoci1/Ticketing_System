@@ -22,7 +22,7 @@ public class PassengerController {
     }
 
     @GetMapping("/queryList")
-    public AxiosResult queryList(@Valid @RequestBody PassengerQuery req) {
+    public AxiosResult queryList(@Valid PassengerQuery req) {
         req.setMemberId(LoginMemberContext.getId());
         return AxiosResult.success(passengerService.queryList(req));
     }

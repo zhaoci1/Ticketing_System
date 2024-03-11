@@ -1,12 +1,15 @@
 package com.jiawa.train.member.req;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
 
 public class PassengerReq  {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
     @NotBlank(message = "名字不能为空")
     private String name;
