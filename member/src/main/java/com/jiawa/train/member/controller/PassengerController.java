@@ -31,7 +31,7 @@ public class PassengerController {
 
     @DeleteMapping("/delete/{id}")
     public AxiosResult deletePassenger(@PathVariable Long id) {
-        passengerService.delete(id);
-        return AxiosResult.success("ok");
+
+        return AxiosResult.success(passengerService.delete(id)>=1);
     }
 }
