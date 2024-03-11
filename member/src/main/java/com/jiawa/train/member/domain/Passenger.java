@@ -1,10 +1,15 @@
 package com.jiawa.train.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import java.util.Date;
 
 public class Passenger {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
     private String name;
@@ -13,8 +18,9 @@ public class Passenger {
 
     private String type;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date updateTime;
 
     public Long getId() {

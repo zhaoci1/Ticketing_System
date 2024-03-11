@@ -66,6 +66,7 @@ public class PassengerService {
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(pageInfo.getList());
+        System.out.println(pageResp);
         return pageResp;
     }
 }

@@ -17,6 +17,7 @@ public class PassengerController {
 
     @PostMapping("/save")
     public AxiosResult save(@Valid @RequestBody PassengerReq req) {
+        System.out.println(req);
         int save = passengerService.save(req);
         return AxiosResult.success(save >= 1);
     }
