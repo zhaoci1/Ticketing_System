@@ -3,9 +3,8 @@ package com.jiawa.train.member.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
 import com.jiawa.train.common.context.LoginMemberContext;
-import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Passenger;
 import com.jiawa.train.member.domain.PassengerExample;
@@ -43,8 +42,10 @@ public class PassengerService {
         if (ObjectUtil.isNotNull(req.getMemberId())) {
             criteria.andMemberIdEqualTo(req.getMemberId());
         }
+//        类似于limit(1,2);
+        PageHelper.startPage(req.getPage(), req.getSize());
+//        这条语句执行时，会将上面一行的语句条件加入进去
         List<Passenger> passengers = passengerMapper.selectByExample(passengerExample);
-
-        return BeanUtil.copyToList(passengers,PassengerQueryResp.class);
+        return BeanUtil.copyToList(passengers, PassengerQueryResp.class);
     }
 }
