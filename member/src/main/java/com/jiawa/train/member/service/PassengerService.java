@@ -4,7 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jiawa.train.common.context.LoginMemberContext;
+import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Passenger;
 import com.jiawa.train.member.domain.PassengerExample;
@@ -23,6 +25,11 @@ public class PassengerService {
     @Resource
     private PassengerMapper passengerMapper;
 
+    /**
+     * 新增乘车人
+     * @param req
+     * @return
+     */
     public int save(PassengerReq req) {
         DateTime now = DateTime.now();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
@@ -35,7 +42,7 @@ public class PassengerService {
         return insert;
     }
 
-    public List<PassengerQueryResp> queryList(PassengerQuery req) {
+    public PageResp<PassengerQueryResp> queryList(PassengerQuery req) {
 
         PassengerExample passengerExample = new PassengerExample();
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
@@ -46,6 +53,10 @@ public class PassengerService {
         PageHelper.startPage(req.getPage(), req.getSize());
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<Passenger> passengers = passengerMapper.selectByExample(passengerExample);
-        return BeanUtil.copyToList(passengers, PassengerQueryResp.class);
+        PageInfo<Passenger> pageInfo = new PageInfo<>(passengers);
+        PageResp pageResp = new PageResp();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(pageInfo.getList());
+        return pageResp;
     }
 }
