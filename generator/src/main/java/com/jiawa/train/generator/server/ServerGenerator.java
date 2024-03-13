@@ -10,13 +10,13 @@ import java.io.File;
 import java.util.HashMap;
 
 public class ServerGenerator {
-    static String servicePath = "[module]/src/main/java/com/jiawa/train/[module]/service/";
+    static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
     static String pomPath = "generator/pom.xml";
 
     static String module = "";
 
     static {
-        new File(servicePath).mkdirs();
+        new File(serverPath).mkdirs();
     }
 
     public static void main(String[] args) throws Exception {
@@ -25,7 +25,7 @@ public class ServerGenerator {
         module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
         System.out.println(module);
 //        将路径替换成当前模块名
-        servicePath = servicePath.replace("[module]", module);
+        serverPath = serverPath.replace("[module]", module);
 //        通过pom.xml配置文件的路径，再获取自定义xml文件的路径
         Document read = new SAXReader().read("generator/" + generatorPath);
 //        寻找table节点
@@ -45,9 +45,29 @@ public class ServerGenerator {
         param.put("do_main", do_main);
         System.out.println(param);
 
-        System.out.println(servicePath);
-        FreemarkerUtil.initConfig("service.ftl");
-        FreemarkerUtil.generator(servicePath + Domain + "Service.java", param);
+        System.out.println(serverPath);
+        gen(Domain, param, "service");
+        gen(Domain, param, "controller");
+    }
+
+    /**
+     * 自由选择生成controller还是service
+     *
+     * @param Domain
+     * @param param
+     * @param target
+     * @throws Exception
+     */
+    private static void gen(String Domain, HashMap<String, Object> param, String target) throws Exception {
+        FreemarkerUtil.initConfig(target + ".ftl");
+        String toPath = serverPath + target + "/";
+        new File(toPath).mkdirs();
+//        将开头转为大写
+        String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
+//        将名字合在一起
+        String fileName = toPath + Domain + Target + ".java";
+        System.out.println("开始生成：" + fileName);
+        FreemarkerUtil.generator(fileName, param);
     }
 
     /**
