@@ -70,10 +70,11 @@ public class ServerGenerator {
         System.out.println("组织参数：" + param);
 
         System.out.println(serverPath);
-        gen(Domain, param, "service","service");
-        gen(Domain, param, "controller","controller");
-        gen(Domain, param, "req", "req");
-        gen(Domain, param, "req", "query");
+//        gen(Domain, param, "service","service");
+//        gen(Domain, param, "controller","controller");
+//        gen(Domain, param, "req", "req");
+//        gen(Domain, param, "req", "query");
+        gen(Domain, param, "resp", "queryResp");
     }
 
     /**
