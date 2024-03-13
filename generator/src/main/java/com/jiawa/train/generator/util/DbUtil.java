@@ -1,6 +1,7 @@
 package com.jiawa.train.generator.util;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class DbUtil {
                 field.setNullAble("YES".equals(nullAble));
 //                设置长度，如果为string类型，还可以拿到最长是多少
                 if (type.toUpperCase().contains("varchar".toUpperCase())) {
-                    String lengthStr = type.substring(type.indexOf("(") + 1, type.length());
+                    String lengthStr = type.substring(type.indexOf("(") + 1, type.length() - 1);
                     field.setLength(Integer.valueOf(lengthStr));
                 } else {
                     field.setLength(0);
@@ -124,7 +125,7 @@ public class DbUtil {
         rs.close();
         stmt.close();
         conn.close();
-        System.out.println("列信息：" + filedList);
+        System.out.println("列信息：" + JSONUtil.toJsonPrettyStr(filedList));
         return filedList;
     }
 

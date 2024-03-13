@@ -10,7 +10,9 @@ import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ServerGenerator {
     static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
@@ -39,6 +41,14 @@ public class ServerGenerator {
 //        获取domain实体
         Node domainObjectName = node.selectSingleNode("@domainObjectName");
 
+//        为dbUtil设置数据源
+        Node connectionURL = read.selectSingleNode("//@connectionURL");
+        Node userId = read.selectSingleNode("//@userId");
+        Node password = read.selectSingleNode("//@password");
+        DbUtil.url = connectionURL.getText();
+        DbUtil.user = userId.getText();
+        DbUtil.password = password.getText();
+
         String Domain = domainObjectName.getText();
         String domain = Domain.substring(0, 1).toLowerCase() + Domain.substring(1);
         String do_main = tableName.getText().replaceAll("_", "-");
@@ -46,17 +56,22 @@ public class ServerGenerator {
         String tableNameCn = DbUtil.getTableComment(tableName.getText());
 //        获取所有的列
         List<Field> fieldList = DbUtil.getColumnByTableName(tableName.getText());
+        Set<String> javaType = getJavaType(fieldList);
 
-
+//        组装参数
         HashMap<String, Object> param = new HashMap<>();
         param.put("Domain", Domain);
         param.put("domain", domain);
         param.put("do_main", do_main);
-        System.out.println(param);
+        param.put("tableNameCn", tableNameCn);
+        param.put("fieldList", fieldList);
+        param.put("typeSet", javaType);
+        System.out.println("组织参数：" + param);
 
         System.out.println(serverPath);
-        gen(Domain, param, "service");
-        gen(Domain, param, "controller");
+//        gen(Domain, param, "service");
+//        gen(Domain, param, "controller","controller");
+        gen(Domain, param, "req","saveReq");
     }
 
     /**
@@ -67,9 +82,9 @@ public class ServerGenerator {
      * @param target
      * @throws Exception
      */
-    private static void gen(String Domain, HashMap<String, Object> param, String target) throws Exception {
+    private static void gen(String Domain, HashMap<String, Object> param,String packageName, String target) throws Exception {
         FreemarkerUtil.initConfig(target + ".ftl");
-        String toPath = serverPath + target + "/";
+        String toPath = serverPath + packageName + "/";
         new File(toPath).mkdirs();
 //        将开头转为大写
         String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
@@ -96,12 +111,19 @@ public class ServerGenerator {
         Node node = read.selectSingleNode("//pom:configurationFile");
         return node.getText();
     }
-//    public static void main(String[] args) throws Exception {
-////      读取ftl文件模板
-//        FreemarkerUtil.initConfig("test.ftl");
-//        HashMap<String, Object> param = new HashMap<>();
-//        param.put("domain", "Test");
-////        渲染java程序
-//        FreemarkerUtil.generator(toPath + "Test.java", param);
-//    }
+
+    /**
+     * 获取所有的java类型，并使用set去重
+     *
+     * @param fieldList
+     * @return
+     */
+    private static Set<String> getJavaType(List<Field> fieldList) {
+        HashSet<String> set = new HashSet<>();
+        for (int i = 0; i < fieldList.size(); i++) {
+            Field field = fieldList.get(i);
+            set.add(field.getJavaType());
+        }
+        return set;
+    }
 }
