@@ -1,12 +1,12 @@
-package com.jiawa.train.member.req;
+package com.jiawa.train.${module}.req;
 
 import com.jiawa.train.common.req.PageReq;
 
-public class PassengerQuery extends PageReq {
+public class ${Domain}Query extends PageReq {
 
     @Override
     public String toString() {
-        return "PassengerQuery{"+
+        return "${Domain}Query{"+
                 '}'+super.toString();
     }
 }

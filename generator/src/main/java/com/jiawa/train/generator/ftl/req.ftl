@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class ${Domain}SaveReq {
+public class ${Domain}Req {
 
     <#list fieldList as field>
     /**

@@ -1,25 +1,55 @@
 package com.jiawa.train.member.req;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import jakarta.validation.constraints.NotBlank;
+
+
+
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class PassengerReq  {
-    @JsonSerialize(using = ToStringSerializer.class)
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class PassengerReq {
+
+    /**
+     * id
+     */
     private Long id;
-    @JsonSerialize(using = ToStringSerializer.class)
+
+    /**
+     * 会员id
+     */
+    @NotNull(message = "【会员id】不能为空")
     private Long memberId;
-    @NotBlank(message = "名字不能为空")
+
+    /**
+     * 姓名
+     */
+    @NotBlank(message = "【姓名】不能为空")
     private String name;
-    @NotBlank(message = "身份证不能为空")
+
+    /**
+     * 身份证
+     */
+    @NotBlank(message = "【身份证】不能为空")
     private String idCard;
-    @NotBlank(message = "旅客类型不能为空")
+
+    /**
+     * 旅客类型|枚举[PassengerTypeEnum]
+     */
+    @NotBlank(message = "【旅客类型】不能为空")
     private String type;
+
+    /**
+     * 新增时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
+
+    /**
+     * 修改时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date updateTime;
 
