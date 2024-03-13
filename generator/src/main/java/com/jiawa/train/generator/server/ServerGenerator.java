@@ -1,5 +1,7 @@
 package com.jiawa.train.generator.server;
 
+import com.jiawa.train.generator.util.DbUtil;
+import com.jiawa.train.generator.util.Field;
 import com.jiawa.train.generator.util.FreemarkerUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -8,6 +10,7 @@ import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 public class ServerGenerator {
     static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
@@ -31,6 +34,7 @@ public class ServerGenerator {
 //        寻找table节点
         Node node = read.selectSingleNode("//table");
         System.out.println(node);
+//        表的中文名
         Node tableName = node.selectSingleNode("@tableName");
 //        获取domain实体
         Node domainObjectName = node.selectSingleNode("@domainObjectName");
@@ -38,6 +42,11 @@ public class ServerGenerator {
         String Domain = domainObjectName.getText();
         String domain = Domain.substring(0, 1).toLowerCase() + Domain.substring(1);
         String do_main = tableName.getText().replaceAll("_", "-");
+//        获取表的中文名
+        String tableNameCn = DbUtil.getTableComment(tableName.getText());
+//        获取所有的列
+        List<Field> fieldList = DbUtil.getColumnByTableName(tableName.getText());
+
 
         HashMap<String, Object> param = new HashMap<>();
         param.put("Domain", Domain);
