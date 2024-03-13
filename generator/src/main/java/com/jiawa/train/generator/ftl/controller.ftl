@@ -1,10 +1,10 @@
-package com.jiawa.train.member.controller;
+package com.jiawa.train.${module}.controller;
 
 import com.jiawa.train.common.context.LoginMemberContext;
 import com.jiawa.train.common.resp.AxiosResult;
-import com.jiawa.train.member.req.${Domain}Query;
-import com.jiawa.train.member.req.${Domain}Req;
-import com.jiawa.train.member.service.${Domain}Service;
+import com.jiawa.train.${module}.req.${Domain}Query;
+import com.jiawa.train.${module}.req.${Domain}Req;
+import com.jiawa.train.${module}.service.${Domain}Service;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.apache.ibatis.annotations.Delete;
