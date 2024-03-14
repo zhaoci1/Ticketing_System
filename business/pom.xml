@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>member</artifactId>
+    <artifactId>business</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.jiawa</groupId>
@@ -30,6 +30,7 @@
             </plugin>
         </plugins>
     </build>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>

@@ -1,6 +1,10 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo" />
+    <div class="logo">
+      <router-link to="/welcome" style="color: white; font-size: 18px;">
+      java-12306控制台
+      </router-link>
+    </div>
     <a-menu
       v-model:selectedKeys="selectedKeys"
       theme="dark"
@@ -40,3 +44,12 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.logo{
+  float: left;
+  height: 31px;
+  width: 150px;
+  color: white;
+  font-size: 20px;
+}
+</style>
