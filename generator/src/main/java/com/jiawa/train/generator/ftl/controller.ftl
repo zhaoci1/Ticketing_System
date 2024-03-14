@@ -25,7 +25,6 @@ public class ${Domain}Controller {
 
     @GetMapping("/queryList")
     public AxiosResult queryList(@Valid ${Domain}Query req) {
-        req.setMemberId(LoginMemberContext.getId());
         return AxiosResult.success(${domain}Service.queryList(req));
     }
 

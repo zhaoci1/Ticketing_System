@@ -1,0 +1,75 @@
+package com.jiawa.train.business.service;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.ObjectUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jiawa.train.common.resp.PageResp;
+import com.jiawa.train.common.util.SnowUtil;
+import com.jiawa.train.business.domain.Train;
+import com.jiawa.train.business.domain.TrainExample;
+import com.jiawa.train.business.mapper.TrainMapper;
+import com.jiawa.train.business.req.TrainQuery;
+import com.jiawa.train.business.req.TrainReq;
+import com.jiawa.train.business.resp.TrainQueryResp;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TrainService {
+
+    @Resource
+    private TrainMapper trainMapper;
+
+    /**
+     * 新增乘车人
+     *
+     * @param req
+     * @return
+     */
+    public int save(TrainReq req) {
+        DateTime now = DateTime.now();
+        Train train = BeanUtil.copyProperties(req, Train.class);
+        int state;
+
+        if (ObjectUtil.isNull(train.getId())) {
+            //        获取当前登录的会员id
+            train.setId(SnowUtil.getSnowflakeNextId());
+            train.setCreateTime(now);
+            train.setUpdateTime(now);
+            state = trainMapper.insert(train);
+        } else {
+            train.setUpdateTime(now);
+            state = trainMapper.updateByPrimaryKey(train);
+        }
+
+        return state;
+    }
+
+    public PageResp<TrainQueryResp> queryList(TrainQuery req) {
+        TrainExample trainExample = new TrainExample();
+        trainExample.setOrderByClause("id desc");
+        TrainExample.Criteria criteria = trainExample.createCriteria();
+//        类似于limit(1,2);
+        PageHelper.startPage(req.getPage(), req.getSize());
+//        这条语句执行时，会将上面一行的语句条件加入进去
+        List<Train> trains = trainMapper.selectByExample(trainExample);
+//        将train转为特定的返回类
+        List<TrainQueryResp> list = BeanUtil.copyToList(trains, TrainQueryResp.class);
+
+        PageInfo<TrainQueryResp> pageInfo = new PageInfo<>(list);
+
+        PageResp<TrainQueryResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+        System.out.println(pageResp);
+        return pageResp;
+    }
+
+    public int delete(Long id) {
+        return trainMapper.deleteByPrimaryKey(id);
+    }
+}

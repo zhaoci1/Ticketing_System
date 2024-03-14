@@ -7,10 +7,13 @@ package com.jiawa.train.business.req;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class StationReq {
+    @JsonSerialize(using= ToStringSerializer.class)
 
     /**
      * id

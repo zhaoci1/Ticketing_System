@@ -23,16 +23,11 @@
           <a-input v-model:value="passenger.name" />
         </a-form-item>
 
-        <a-form-item label="身份证">
-          <a-input v-model:value="passenger.idCard" />
+        <a-form-item label="站名拼音">
+          <a-input v-model:value="passenger.namePinyin" />
         </a-form-item>
-
-        <a-form-item label="类型">
-          <a-select v-model:value="passenger.type">
-            <a-select-option v-for="item in PASSENGER_TYPE_ARRAY" :value="item.key" :key="item.key">
-              {{ item.value }}
-            </a-select-option>
-          </a-select>
+        <a-form-item label="站名拼音首字母">
+          <a-input v-model:value="passenger.namePy" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -68,7 +63,7 @@
 </template>
 
 <script>
-import Axios from "@/api/passengerApi";
+import Axios from "@/api/stationApi";
 import { message } from "ant-design-vue";
 import { reactive, ref, onMounted } from "vue";
 
@@ -90,14 +85,14 @@ export default {
         key: "name",
       },
       {
-        title: "身份证",
-        dataIndex: "idCard",
-        key: "idCard",
+        title: "站名拼音",
+        dataIndex: "namePinyin",
+        key: "namePinyin",
       },
       {
-        title: "类型",
-        dataIndex: "type",
-        key: "type",
+        title: "站名拼音首字母",
+        dataIndex: "namePy",
+        key: "namePy",
       },
       {
         title:"操作",
@@ -107,8 +102,8 @@ export default {
     const passenger = ref({
       id: undefined,
       name: undefined,
-      idCard: undefined,
-      type: undefined,
+      namePinyin: undefined,
+      namePy: undefined,
       memberId: undefined,
       createTime: undefined,
       updateTime: undefined,
@@ -200,4 +195,4 @@ export default {
     };
   },
 };
-</script>
+</script>@/api/businessApi

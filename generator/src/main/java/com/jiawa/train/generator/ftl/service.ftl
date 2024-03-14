@@ -59,6 +59,11 @@ public class ${Domain}Service {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<${Domain}> ${domain}s = ${domain}Mapper.selectByExample(${domain}Example);
         PageInfo<${Domain}> pageInfo = new PageInfo<>(${domain}s);
+
+        PageResp<${Domain}QueryResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(pageInfo.getList());
