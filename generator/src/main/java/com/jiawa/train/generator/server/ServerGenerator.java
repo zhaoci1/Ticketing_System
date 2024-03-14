@@ -27,6 +27,7 @@ public class ServerGenerator {
     }
 
     public static void main(String[] args) throws Exception {
+//        获取配置文件名
         String generatorPath = getGeneratorPath();
 //        获取当前模块名
         module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
@@ -73,11 +74,11 @@ public class ServerGenerator {
         System.out.println("组织参数：" + param);
 
         System.out.println(serverPath);
-//        gen(Domain, param, "service","service");
-//        gen(Domain, param, "controller","controller");
-//        gen(Domain, param, "req", "req");
-//        gen(Domain, param, "req", "query");
-//        gen(Domain, param, "resp", "queryResp");
+        gen(Domain, param, "service","service");
+        gen(Domain, param, "controller","controller");
+        gen(Domain, param, "req", "req");
+        gen(Domain, param, "req", "query");
+        gen(Domain, param, "resp", "queryResp");
         genVue(Domain, param);
     }
 

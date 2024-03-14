@@ -23,8 +23,6 @@ import {
 import { defineComponent, ref } from "vue";
 import TheHeaderView from "@/components/the-header";
 import TheSiderView from "@/components/the-sider.vue";
-import store from "@/store";
-import Axios from "@/api/loginApi";
 
 export default defineComponent({
   components: {

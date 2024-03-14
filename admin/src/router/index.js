@@ -15,6 +15,10 @@ const routes = [
         path: "about",
         component: () => import("../views/main/About.vue"),
       },
+      {
+        path: "station",
+        component: () => import("../views/main/Station.vue"),
+      },
     ],
   },
   {

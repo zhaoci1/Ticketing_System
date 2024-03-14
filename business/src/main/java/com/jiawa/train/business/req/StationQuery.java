@@ -1,9 +1,10 @@
-package com.jiawa.train.${module}.req;
+package com.jiawa.train.business.req;
 
 import com.jiawa.train.common.req.PageReq;
 
-public class ${Domain}Query extends PageReq {
- private Long memberId;
+public class StationQuery extends PageReq {
+
+    private Long memberId;
 
     public Long getMemberId() {
         return memberId;
@@ -12,10 +13,9 @@ public class ${Domain}Query extends PageReq {
     public void setMemberId(Long memberId) {
         this.memberId = memberId;
     }
-
     @Override
     public String toString() {
-        return "${Domain}Query{"+
+        return "StationQuery{"+
                 '}'+super.toString();
     }
 }
