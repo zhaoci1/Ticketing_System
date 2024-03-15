@@ -24,10 +24,10 @@
         </a-form-item>
 
         <a-form-item label="站名拼音">
-          <a-input v-model:value="passenger.namePinyin" />
+          <a-input v-model:value="passenger.namePinyin" disabled />
         </a-form-item>
-        <a-form-item label="站名拼音首字母">
-          <a-input v-model:value="passenger.namePy" />
+        <a-form-item label="拼音首字母">
+          <a-input v-model:value="passenger.namePy" disabled/>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -41,20 +41,20 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <a-space>
-            <a-popconfirm 
-            title="删除后不可恢复，确认删除?" 
-            @confirm="onDelete(record)" 
-            ok-text="确认"
-            cancel-text="取消">
-            <a style="color:red">删除</a>
-
+            <a-popconfirm
+              title="删除后不可恢复，确认删除?"
+              @confirm="onDelete(record)"
+              ok-text="确认"
+              cancel-text="取消"
+            >
+              <a style="color: red">删除</a>
             </a-popconfirm>
             <a @click="onEdit(record)">编辑</a>
           </a-space>
         </template>
-        <template v-else-if="column.dataIndex ==='type'">
+        <template v-else-if="column.dataIndex === 'type'">
           <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key">
-            <span v-if="item.key===record.type">{{ item.value }}</span>
+            <span v-if="item.key === record.type">{{ item.value }}</span>
           </span>
         </template>
       </template>
@@ -65,7 +65,8 @@
 <script>
 import Axios from "@/api/stationApi";
 import { message } from "ant-design-vue";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
+import { pinyin } from "pinyin-pro";
 
 export default {
   setup() {
@@ -80,7 +81,7 @@ export default {
     });
     const columns = [
       {
-        title: "姓名",
+        title: "站名",
         dataIndex: "name",
         key: "name",
       },
@@ -95,9 +96,9 @@ export default {
         key: "namePy",
       },
       {
-        title:"操作",
-        dataIndex:"operation"
-      }
+        title: "操作",
+        dataIndex: "operation",
+      },
     ];
     const passenger = ref({
       id: undefined,
@@ -108,27 +109,41 @@ export default {
       createTime: undefined,
       updateTime: undefined,
     });
+    watch(
+      () => passenger.value.name,
+      () => {
+        if (passenger.value.name != null) {
+          passenger.value.namePinyin = pinyin(passenger.value.name, {
+            tonType: "none",
+          }).replaceAll(" ", "");
+          passenger.value.namePy = pinyin(passenger.value.name, {
+            pattern: "first",
+            tonType: "none",
+          }).replaceAll(" ", "");
+        }
+      }
+    );
     const showModal = () => {
-      passenger.value = {}
+      passenger.value = {};
       visible.value = true;
     };
     const onEdit = (record) => {
-      passenger.value = {...record};
+      passenger.value = { ...record };
       visible.value = true;
     };
-    const onDelete = (record)=>{
-      Axios.delete(record.id).then(res=>{
-        if(res.data){
+    const onDelete = (record) => {
+      Axios.delete(record.id).then((res) => {
+        if (res.data) {
           message.success("删除成功");
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize,
           });
-        }else{
+        } else {
           message.success("删除失败");
         }
-      })
-    }
+      });
+    };
     const handleOk = (e) => {
       Axios.save(passenger.value).then((res) => {
         if (res.data) {
@@ -195,4 +210,5 @@ export default {
     };
   },
 };
-</script>@/api/businessApi
+</script>
+@/api/businessApi
