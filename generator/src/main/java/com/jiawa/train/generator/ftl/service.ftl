@@ -58,11 +58,8 @@ public class ${Domain}Service {
         PageHelper.startPage(req.getPage(), req.getSize());
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<${Domain}> ${domain}s = ${domain}Mapper.selectByExample(${domain}Example);
-        PageInfo<${Domain}> pageInfo = new PageInfo<>(${domain}s);
-
-        PageResp<${Domain}QueryResp> pageResp = new PageResp<>();
-        pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(list);
+        List<${Domain}QueryResp> list = BeanUtil.copyToList(${domain}s, ${Domain}QueryResp.class);
+        PageInfo<${Domain}QueryResp> pageInfo = new PageInfo<>(list);
 
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
