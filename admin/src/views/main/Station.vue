@@ -27,7 +27,7 @@
           <a-input v-model:value="passenger.namePinyin" disabled />
         </a-form-item>
         <a-form-item label="拼音首字母">
-          <a-input v-model:value="passenger.namePy" disabled/>
+          <a-input v-model:value="passenger.namePy" disabled />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -120,8 +120,12 @@ export default {
             pattern: "first",
             tonType: "none",
           }).replaceAll(" ", "");
+        } else {
+          passenger.value.namePinyin = "";
+          passenger.value.namePy = "";
         }
-      }
+      },
+      { immediate: true }
     );
     const showModal = () => {
       passenger.value = {};
