@@ -33,7 +33,7 @@ public class TrainController {
         return AxiosResult.success(trainService.delete(id) >= 1);
     }
 
-    @GetMapping("/queryList")
+    @GetMapping("/queryAll")
     public AxiosResult queryList() {
         return AxiosResult.success(trainService.queryAll());
     }
