@@ -13,7 +13,10 @@ let Axios = {
     });
   },
   delete(id) {
-    return myAxios.delete("business/admin/train-station/delete/"+id);
+    return myAxios.delete("business/admin/train-station/delete/" + id);
+  },
+  queryAll() {
+    return myAxios.get("business/admin/train/queryAll");
   },
 };
 

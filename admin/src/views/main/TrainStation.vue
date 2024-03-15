@@ -85,7 +85,7 @@
 <script>
 import Axios from "@/api/trainStationApi";
 import { message } from "ant-design-vue";
-import { defineComponent, ref, onMounted,watch } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 import { pinyin } from "pinyin-pro";
 
 export default defineComponent({
@@ -105,6 +105,7 @@ export default defineComponent({
       createTime: undefined,
       updateTime: undefined,
     });
+    let trainAll = ref({});
     let loading = ref(false);
     const pagination = ref({
       total: 0,
@@ -173,6 +174,11 @@ export default defineComponent({
       },
       { immediate: true }
     );
+    const queryTrainAll = () => {
+      Axios.queryAll().then((res) => {
+        console.log(res);
+      });
+    };
     const onAdd = () => {
       trainStation.value = {};
       visible.value = true;
@@ -238,6 +244,7 @@ export default defineComponent({
       });
     };
     onMounted(() => {
+      queryTrainAll();
       handleQuery({
         page: pagination.value.current,
         size: pagination.value.pageSize,
@@ -257,6 +264,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      queryTrainAll,
     };
   },
 });
