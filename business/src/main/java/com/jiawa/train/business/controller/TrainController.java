@@ -30,7 +30,11 @@ public class TrainController {
 
     @DeleteMapping("/delete/{id}")
     public AxiosResult deleteTrain(@PathVariable Long id) {
+        return AxiosResult.success(trainService.delete(id) >= 1);
+    }
 
-        return AxiosResult.success(trainService.delete(id)>=1);
+    @GetMapping("/queryList")
+    public AxiosResult queryList() {
+        return AxiosResult.success(trainService.queryAll());
     }
 }

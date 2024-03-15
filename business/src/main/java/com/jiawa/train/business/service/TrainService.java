@@ -72,4 +72,14 @@ public class TrainService {
     public int delete(Long id) {
         return trainMapper.deleteByPrimaryKey(id);
     }
+
+    public List<TrainQueryResp> queryAll() {
+        TrainExample trainExample = new TrainExample();
+        trainExample.setOrderByClause("code desc");
+//        这条语句执行时，会将上面一行的语句条件加入进去
+        List<Train> trains = trainMapper.selectByExample(trainExample);
+//        将train转为特定的返回类
+
+        return BeanUtil.copyToList(trains, TrainQueryResp.class);
+    }
 }
