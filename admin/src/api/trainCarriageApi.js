@@ -9,11 +9,12 @@ let Axios = {
       params: {
         page: page.page,
         size: page.size,
+        trainCode: page.trainCode,
       },
     });
   },
   delete(id) {
-    return myAxios.delete("business/admin/train-carriage/delete/"+id);
+    return myAxios.delete("business/admin/train-carriage/delete/" + id);
   },
 };
 

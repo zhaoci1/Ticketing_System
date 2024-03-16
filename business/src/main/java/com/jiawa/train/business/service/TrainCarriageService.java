@@ -54,8 +54,12 @@ public class TrainCarriageService {
 
     public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQuery req) {
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
-        trainCarriageExample.setOrderByClause("id desc");
+        trainCarriageExample.setOrderByClause("train_code asc,`index` asc");
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+
+        if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
 //        类似于limit(1,2);
         PageHelper.startPage(req.getPage(), req.getSize());

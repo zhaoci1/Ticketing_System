@@ -3,19 +3,20 @@ package com.jiawa.train.business.req;
 import com.jiawa.train.common.req.PageReq;
 
 public class TrainCarriageQuery extends PageReq {
- private Long memberId;
+    private String trainCode;
 
-    public Long getMemberId() {
-        return memberId;
+    public String getTrainCode() {
+        return trainCode;
     }
 
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
+    public void setTrainCode(String trainCode) {
+        this.trainCode = trainCode;
     }
 
     @Override
     public String toString() {
-        return "TrainCarriageQuery{"+
-                '}'+super.toString();
+        return "TrainStationQuery{" +
+                "trainCode='" + trainCode + '\'' +
+                "} " + super.toString();
     }
 }

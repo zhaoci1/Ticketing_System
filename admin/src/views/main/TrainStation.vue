@@ -2,7 +2,7 @@
   <div>
     <p>
       <a-space>
-        <the-select v-model="param.trainCode" width="200px"></the-select>
+        <the-select v-model="param.trainCode"></the-select>
         <a-button type="primary" @click="handleQuery()">查找</a-button>
         <a-button type="primary" @click="onAdd">新增</a-button>
       </a-space>
@@ -271,3 +271,8 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+the-select{
+  width: 200px;
+}
+</style>

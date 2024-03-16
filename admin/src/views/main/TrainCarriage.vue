@@ -2,7 +2,8 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="handleQuery()">刷新</a-button>
+        <the-select v-model="param.trainCode" width="200px"></the-select>
+        <a-button type="primary" @click="handleQuery()">查找</a-button>
         <a-button type="primary" @click="onAdd">新增</a-button>
       </a-space>
     </p>
@@ -101,6 +102,9 @@ export default defineComponent({
       updateTime: undefined,
     });
     let loading = ref(false);
+    let param = ref({
+      trainCode: "",
+    });
     const pagination = ref({
       total: 0,
       current: 1,
@@ -197,6 +201,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      page.trainCode = param.value.trainCode;
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -229,6 +234,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      param,
     };
   },
 });
