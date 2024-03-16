@@ -47,7 +47,7 @@
         :wrapper-col="{ span: 20 }"
       >
         <a-form-item label="车次编号">
-          <a-input v-model:value="train.code" />
+          <the-select v-model="train.code"></the-select>
         </a-form-item>
         <a-form-item label="车次类型">
           <a-select v-model:value="train.type">
@@ -97,9 +97,10 @@ import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { pinyin } from "pinyin-pro";
 import stationSelect from "@/components/station-select.vue";
+import TheSelect from "@/components/the-select.vue";
 
 export default defineComponent({
-  components: { stationSelect },
+  components: { stationSelect, TheSelect },
   name: "train-view",
   setup() {
     const TRAIN_TYPE_ARRAY = window.TRAIN_TYPE_ARRAY;
@@ -237,8 +238,8 @@ export default defineComponent({
 
     const handleTableChange = (pagination) => {
       handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize,
+        page: pagination.current,
+        size: pagination.pageSize,
       });
     };
 

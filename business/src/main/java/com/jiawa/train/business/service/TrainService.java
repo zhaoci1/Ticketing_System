@@ -63,7 +63,7 @@ public class TrainService {
 //        将train转为特定的返回类
         List<TrainQueryResp> list = BeanUtil.copyToList(trains, TrainQueryResp.class);
 
-        PageInfo<TrainQueryResp> pageInfo = new PageInfo<>(list);
+        PageInfo<Train> pageInfo = new PageInfo<>(trains);
 
         PageResp<TrainQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
