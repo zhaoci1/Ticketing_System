@@ -7,15 +7,15 @@ public class TrainCarriage {
 
     private String trainCode;
 
-    private Integer carriageIndex;
-
-    private String row;
-
-    private String col;
+    private Integer index;
 
     private String seatType;
 
-    private Integer carriageSeatIndex;
+    private Integer seatCount;
+
+    private Integer rowCount;
+
+    private Integer colCount;
 
     private Date createTime;
 
@@ -37,28 +37,12 @@ public class TrainCarriage {
         this.trainCode = trainCode;
     }
 
-    public Integer getCarriageIndex() {
-        return carriageIndex;
+    public Integer getIndex() {
+        return index;
     }
 
-    public void setCarriageIndex(Integer carriageIndex) {
-        this.carriageIndex = carriageIndex;
-    }
-
-    public String getRow() {
-        return row;
-    }
-
-    public void setRow(String row) {
-        this.row = row;
-    }
-
-    public String getCol() {
-        return col;
-    }
-
-    public void setCol(String col) {
-        this.col = col;
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public String getSeatType() {
@@ -69,12 +53,28 @@ public class TrainCarriage {
         this.seatType = seatType;
     }
 
-    public Integer getCarriageSeatIndex() {
-        return carriageSeatIndex;
+    public Integer getSeatCount() {
+        return seatCount;
     }
 
-    public void setCarriageSeatIndex(Integer carriageSeatIndex) {
-        this.carriageSeatIndex = carriageSeatIndex;
+    public void setSeatCount(Integer seatCount) {
+        this.seatCount = seatCount;
+    }
+
+    public Integer getRowCount() {
+        return rowCount;
+    }
+
+    public void setRowCount(Integer rowCount) {
+        this.rowCount = rowCount;
+    }
+
+    public Integer getColCount() {
+        return colCount;
+    }
+
+    public void setColCount(Integer colCount) {
+        this.colCount = colCount;
     }
 
     public Date getCreateTime() {
@@ -101,11 +101,11 @@ public class TrainCarriage {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", trainCode=").append(trainCode);
-        sb.append(", carriageIndex=").append(carriageIndex);
-        sb.append(", row=").append(row);
-        sb.append(", col=").append(col);
+        sb.append(", index=").append(index);
         sb.append(", seatType=").append(seatType);
-        sb.append(", carriageSeatIndex=").append(carriageSeatIndex);
+        sb.append(", seatCount=").append(seatCount);
+        sb.append(", rowCount=").append(rowCount);
+        sb.append(", colCount=").append(colCount);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append("]");

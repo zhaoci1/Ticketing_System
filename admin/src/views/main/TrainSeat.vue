@@ -43,7 +43,7 @@
                      ok-text="确认" cancel-text="取消">
                 <a-form :model="trainSeat" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
                             <a-form-item label="车次编号">
-                                    <a-input v-model:value="trainSeat.trainCode"/>
+                                    <the-select v-model="trainSeat.trainCode"></the-select>
                             </a-form-item>
                             <a-form-item label="厢序">
                                     <a-input v-model:value="trainSeat.carriageIndex"/>
@@ -77,10 +77,12 @@
 
 <script>
     import Axios from "@/api/trainSeatApi";
+import theSelect from "@/components/the-select.vue";
     import {message} from "ant-design-vue";
     import {defineComponent, ref, onMounted} from "vue";
 
     export default defineComponent({
+  components: { theSelect },
         name: "train-seat-view",
         setup() {
             const SEAT_COL_ARRAY = window.SEAT_COL_ARRAY;

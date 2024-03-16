@@ -15,6 +15,9 @@ let Axios = {
   delete(id) {
     return myAxios.delete("business/admin/station/delete/"+id);
   },
+  queryAll() {
+    return myAxios.get("business/admin/station/queryAll");
+  },
 };
 
 export default Axios;

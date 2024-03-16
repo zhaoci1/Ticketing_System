@@ -31,4 +31,9 @@ public class AdminStationController {
     public AxiosResult deleteStation(@PathVariable Long id) {
         return AxiosResult.success(stationService.delete(id)>=1);
     }
+
+    @GetMapping("/queryAll")
+    public AxiosResult queryList() {
+        return AxiosResult.success(stationService.queryAll());
+    }
 }

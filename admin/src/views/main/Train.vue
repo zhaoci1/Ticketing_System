@@ -28,8 +28,8 @@
           </a-space>
         </template>
         <template v-else-if="column.dataIndex === 'type'">
-          <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key">
-            <span v-if="item.key === record.type">{{ item.value }}</span>
+          <span v-for="item in TRAIN_TYPE_ARRAY" :key="item.code">
+            <span v-if="item.code === record.code">{{ item.value }}</span>
           </span>
         </template>
       </template>
@@ -61,7 +61,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="始发站">
-          <a-input v-model:value="train.start" />
+          <station-select v-model="train.start"></station-select>
         </a-form-item>
         <a-form-item label="始发站拼音">
           <a-input v-model:value="train.startPinyin" disabled />
@@ -74,7 +74,7 @@
           />
         </a-form-item>
         <a-form-item label="终点站">
-          <a-input v-model:value="train.end" />
+          <station-select v-model="train.end"></station-select>
         </a-form-item>
         <a-form-item label="终点站拼音">
           <a-input v-model:value="train.endPinyin" disabled />
@@ -96,8 +96,10 @@ import Axios from "@/api/trainApi";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { pinyin } from "pinyin-pro";
+import stationSelect from "@/components/station-select.vue";
 
 export default defineComponent({
+  components: { stationSelect },
   name: "train-view",
   setup() {
     const TRAIN_TYPE_ARRAY = window.TRAIN_TYPE_ARRAY;
@@ -106,7 +108,7 @@ export default defineComponent({
       id: undefined,
       code: undefined,
       type: undefined,
-      start: undefined,
+      start: "12312312",
       startPinyin: undefined,
       startTime: undefined,
       end: undefined,
@@ -235,8 +237,8 @@ export default defineComponent({
 
     const handleTableChange = (pagination) => {
       handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize,
+        page: pagination.value.current,
+        size: pagination.value.pageSize,
       });
     };
 

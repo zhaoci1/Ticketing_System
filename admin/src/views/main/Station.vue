@@ -19,7 +19,7 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 16 }"
       >
-        <a-form-item label="姓名">
+        <a-form-item label="站名">
           <a-input v-model:value="passenger.name" />
         </a-form-item>
 

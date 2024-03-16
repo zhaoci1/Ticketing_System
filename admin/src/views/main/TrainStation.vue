@@ -42,13 +42,13 @@
         :wrapper-col="{ span: 20 }"
       >
         <a-form-item label="车次编号">
-          <a-input v-model:value="trainStation.trainCode" />
+          <the-select v-model="trainStation.trainCode"></the-select>
         </a-form-item>
         <a-form-item label="站序">
           <a-input v-model:value="trainStation.index" />
         </a-form-item>
         <a-form-item label="站名">
-          <a-input v-model:value="trainStation.name" />
+          <station-select v-model="trainStation.name"></station-select>
         </a-form-item>
         <a-form-item label="站名拼音">
           <a-input v-model:value="trainStation.namePinyin" disabled />
@@ -87,8 +87,11 @@ import Axios from "@/api/trainStationApi";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted, watch } from "vue";
 import { pinyin } from "pinyin-pro";
+import theSelect from "@/components/the-select.vue";
+import StationSelect from "@/components/station-select.vue";
 
 export default defineComponent({
+  components: { theSelect, StationSelect },
   name: "train-station-view",
   setup() {
     const visible = ref(false);
@@ -105,7 +108,6 @@ export default defineComponent({
       createTime: undefined,
       updateTime: undefined,
     });
-    let trainAll = ref({});
     let loading = ref(false);
     const pagination = ref({
       total: 0,
@@ -174,11 +176,7 @@ export default defineComponent({
       },
       { immediate: true }
     );
-    const queryTrainAll = () => {
-      Axios.queryAll().then((res) => {
-        console.log(res);
-      });
-    };
+    // 下拉框筛选方法
     const onAdd = () => {
       trainStation.value = {};
       visible.value = true;
@@ -244,7 +242,6 @@ export default defineComponent({
       });
     };
     onMounted(() => {
-      queryTrainAll();
       handleQuery({
         page: pagination.value.current,
         size: pagination.value.pageSize,
@@ -264,7 +261,6 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
-      queryTrainAll,
     };
   },
 });

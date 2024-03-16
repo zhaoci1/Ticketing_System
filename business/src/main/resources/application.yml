@@ -7,7 +7,7 @@ spring:
     username: train_business
     url: jdbc:mysql://rm-7xv9s40yi6w07v136go.rwlb.rds.aliyuncs.com/train_business?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
     password: 202019Cs
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
 logging:
@@ -15,5 +15,5 @@ logging:
     com:
       jiawa:
         train:
-          member:
+          business:
             mapper: trace

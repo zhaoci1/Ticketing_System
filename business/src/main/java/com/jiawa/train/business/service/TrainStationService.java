@@ -58,12 +58,13 @@ public class TrainStationService {
         PageHelper.startPage(req.getPage(), req.getSize());
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<TrainStation> trainStations = trainStationMapper.selectByExample(trainStationExample);
-        List<TrainStationQueryResp> list = BeanUtil.copyToList(trainStations, TrainStationQueryResp.class);
-        PageInfo<TrainStationQueryResp> pageInfo = new PageInfo<>(list);
 
-        PageResp pageResp = new PageResp();
+        List<TrainStationQueryResp> list = BeanUtil.copyToList(trainStations, TrainStationQueryResp.class);
+        PageInfo<TrainStation> pageInfo = new PageInfo<>(trainStations);
+
+        PageResp<TrainStationQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }

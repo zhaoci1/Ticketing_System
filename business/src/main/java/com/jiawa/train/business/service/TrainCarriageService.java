@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.Station;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.TrainCarriage;
@@ -14,6 +15,8 @@ import com.jiawa.train.business.req.TrainCarriageQuery;
 import com.jiawa.train.business.req.TrainCarriageReq;
 import com.jiawa.train.business.resp.TrainCarriageQueryResp;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +26,7 @@ public class TrainCarriageService {
 
     @Resource
     private TrainCarriageMapper trainCarriageMapper;
-
+    private static final Logger LOG = LoggerFactory.getLogger(TrainCarriageService.class);
     /**
      * 新增乘车人
      *
@@ -58,12 +61,12 @@ public class TrainCarriageService {
         PageHelper.startPage(req.getPage(), req.getSize());
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<TrainCarriage> trainCarriages = trainCarriageMapper.selectByExample(trainCarriageExample);
-        List<TrainCarriageQueryResp> list = BeanUtil.copyToList(trainCarriages, TrainCarriageQueryResp.class);
-        PageInfo<TrainCarriageQueryResp> pageInfo = new PageInfo<>(list);
 
+        List<TrainCarriageQueryResp> list = BeanUtil.copyToList(trainCarriages, TrainCarriageQueryResp.class);
+        PageInfo<TrainCarriage> pageInfo = new PageInfo<>(trainCarriages);
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }

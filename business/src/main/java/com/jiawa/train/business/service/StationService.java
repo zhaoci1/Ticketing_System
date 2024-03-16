@@ -5,6 +5,9 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.Train;
+import com.jiawa.train.business.domain.TrainExample;
+import com.jiawa.train.business.resp.TrainQueryResp;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.Station;
@@ -69,4 +72,15 @@ public class StationService {
     public int delete(Long id) {
         return stationMapper.deleteByPrimaryKey(id);
     }
+
+    public List<StationQueryResp> queryAll() {
+        StationExample stationExample = new StationExample();
+        stationExample.setOrderByClause("name_pinyin desc");
+//        这条语句执行时，会将上面一行的语句条件加入进去
+        List<Station> stations = stationMapper.selectByExample(stationExample);
+//        将train转为特定的返回类
+
+        return BeanUtil.copyToList(stations, StationQueryResp.class);
+    }
+
 }

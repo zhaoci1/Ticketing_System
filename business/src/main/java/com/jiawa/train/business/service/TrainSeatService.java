@@ -59,11 +59,12 @@ public class TrainSeatService {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<TrainSeat> trainSeats = trainSeatMapper.selectByExample(trainSeatExample);
         List<TrainSeatQueryResp> list = BeanUtil.copyToList(trainSeats, TrainSeatQueryResp.class);
-        PageInfo<TrainSeatQueryResp> pageInfo = new PageInfo<>(list);
 
-        PageResp pageResp = new PageResp();
+        PageInfo<TrainSeat> pageInfo = new PageInfo<>(trainSeats);
+
+        PageResp<TrainSeatQueryResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }

@@ -235,203 +235,63 @@ public class TrainCarriageExample {
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexIsNull() {
-            addCriterion("carriage_index is null");
+        public Criteria andIndexIsNull() {
+            addCriterion("`index` is null");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexIsNotNull() {
-            addCriterion("carriage_index is not null");
+        public Criteria andIndexIsNotNull() {
+            addCriterion("`index` is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexEqualTo(Integer value) {
-            addCriterion("carriage_index =", value, "carriageIndex");
+        public Criteria andIndexEqualTo(Integer value) {
+            addCriterion("`index` =", value, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexNotEqualTo(Integer value) {
-            addCriterion("carriage_index <>", value, "carriageIndex");
+        public Criteria andIndexNotEqualTo(Integer value) {
+            addCriterion("`index` <>", value, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexGreaterThan(Integer value) {
-            addCriterion("carriage_index >", value, "carriageIndex");
+        public Criteria andIndexGreaterThan(Integer value) {
+            addCriterion("`index` >", value, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexGreaterThanOrEqualTo(Integer value) {
-            addCriterion("carriage_index >=", value, "carriageIndex");
+        public Criteria andIndexGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`index` >=", value, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexLessThan(Integer value) {
-            addCriterion("carriage_index <", value, "carriageIndex");
+        public Criteria andIndexLessThan(Integer value) {
+            addCriterion("`index` <", value, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexLessThanOrEqualTo(Integer value) {
-            addCriterion("carriage_index <=", value, "carriageIndex");
+        public Criteria andIndexLessThanOrEqualTo(Integer value) {
+            addCriterion("`index` <=", value, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexIn(List<Integer> values) {
-            addCriterion("carriage_index in", values, "carriageIndex");
+        public Criteria andIndexIn(List<Integer> values) {
+            addCriterion("`index` in", values, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexNotIn(List<Integer> values) {
-            addCriterion("carriage_index not in", values, "carriageIndex");
+        public Criteria andIndexNotIn(List<Integer> values) {
+            addCriterion("`index` not in", values, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexBetween(Integer value1, Integer value2) {
-            addCriterion("carriage_index between", value1, value2, "carriageIndex");
+        public Criteria andIndexBetween(Integer value1, Integer value2) {
+            addCriterion("`index` between", value1, value2, "index");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageIndexNotBetween(Integer value1, Integer value2) {
-            addCriterion("carriage_index not between", value1, value2, "carriageIndex");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowIsNull() {
-            addCriterion("`row` is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowIsNotNull() {
-            addCriterion("`row` is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowEqualTo(String value) {
-            addCriterion("`row` =", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowNotEqualTo(String value) {
-            addCriterion("`row` <>", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowGreaterThan(String value) {
-            addCriterion("`row` >", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowGreaterThanOrEqualTo(String value) {
-            addCriterion("`row` >=", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowLessThan(String value) {
-            addCriterion("`row` <", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowLessThanOrEqualTo(String value) {
-            addCriterion("`row` <=", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowLike(String value) {
-            addCriterion("`row` like", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowNotLike(String value) {
-            addCriterion("`row` not like", value, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowIn(List<String> values) {
-            addCriterion("`row` in", values, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowNotIn(List<String> values) {
-            addCriterion("`row` not in", values, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowBetween(String value1, String value2) {
-            addCriterion("`row` between", value1, value2, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andRowNotBetween(String value1, String value2) {
-            addCriterion("`row` not between", value1, value2, "row");
-            return (Criteria) this;
-        }
-
-        public Criteria andColIsNull() {
-            addCriterion("col is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andColIsNotNull() {
-            addCriterion("col is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andColEqualTo(String value) {
-            addCriterion("col =", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColNotEqualTo(String value) {
-            addCriterion("col <>", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColGreaterThan(String value) {
-            addCriterion("col >", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColGreaterThanOrEqualTo(String value) {
-            addCriterion("col >=", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColLessThan(String value) {
-            addCriterion("col <", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColLessThanOrEqualTo(String value) {
-            addCriterion("col <=", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColLike(String value) {
-            addCriterion("col like", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColNotLike(String value) {
-            addCriterion("col not like", value, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColIn(List<String> values) {
-            addCriterion("col in", values, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColNotIn(List<String> values) {
-            addCriterion("col not in", values, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColBetween(String value1, String value2) {
-            addCriterion("col between", value1, value2, "col");
-            return (Criteria) this;
-        }
-
-        public Criteria andColNotBetween(String value1, String value2) {
-            addCriterion("col not between", value1, value2, "col");
+        public Criteria andIndexNotBetween(Integer value1, Integer value2) {
+            addCriterion("`index` not between", value1, value2, "index");
             return (Criteria) this;
         }
 
@@ -505,63 +365,183 @@ public class TrainCarriageExample {
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexIsNull() {
-            addCriterion("carriage_seat_index is null");
+        public Criteria andSeatCountIsNull() {
+            addCriterion("seat_count is null");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexIsNotNull() {
-            addCriterion("carriage_seat_index is not null");
+        public Criteria andSeatCountIsNotNull() {
+            addCriterion("seat_count is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexEqualTo(Integer value) {
-            addCriterion("carriage_seat_index =", value, "carriageSeatIndex");
+        public Criteria andSeatCountEqualTo(Integer value) {
+            addCriterion("seat_count =", value, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexNotEqualTo(Integer value) {
-            addCriterion("carriage_seat_index <>", value, "carriageSeatIndex");
+        public Criteria andSeatCountNotEqualTo(Integer value) {
+            addCriterion("seat_count <>", value, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexGreaterThan(Integer value) {
-            addCriterion("carriage_seat_index >", value, "carriageSeatIndex");
+        public Criteria andSeatCountGreaterThan(Integer value) {
+            addCriterion("seat_count >", value, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexGreaterThanOrEqualTo(Integer value) {
-            addCriterion("carriage_seat_index >=", value, "carriageSeatIndex");
+        public Criteria andSeatCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("seat_count >=", value, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexLessThan(Integer value) {
-            addCriterion("carriage_seat_index <", value, "carriageSeatIndex");
+        public Criteria andSeatCountLessThan(Integer value) {
+            addCriterion("seat_count <", value, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexLessThanOrEqualTo(Integer value) {
-            addCriterion("carriage_seat_index <=", value, "carriageSeatIndex");
+        public Criteria andSeatCountLessThanOrEqualTo(Integer value) {
+            addCriterion("seat_count <=", value, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexIn(List<Integer> values) {
-            addCriterion("carriage_seat_index in", values, "carriageSeatIndex");
+        public Criteria andSeatCountIn(List<Integer> values) {
+            addCriterion("seat_count in", values, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexNotIn(List<Integer> values) {
-            addCriterion("carriage_seat_index not in", values, "carriageSeatIndex");
+        public Criteria andSeatCountNotIn(List<Integer> values) {
+            addCriterion("seat_count not in", values, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexBetween(Integer value1, Integer value2) {
-            addCriterion("carriage_seat_index between", value1, value2, "carriageSeatIndex");
+        public Criteria andSeatCountBetween(Integer value1, Integer value2) {
+            addCriterion("seat_count between", value1, value2, "seatCount");
             return (Criteria) this;
         }
 
-        public Criteria andCarriageSeatIndexNotBetween(Integer value1, Integer value2) {
-            addCriterion("carriage_seat_index not between", value1, value2, "carriageSeatIndex");
+        public Criteria andSeatCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("seat_count not between", value1, value2, "seatCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountIsNull() {
+            addCriterion("`row_count` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountIsNotNull() {
+            addCriterion("`row_count` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountEqualTo(Integer value) {
+            addCriterion("`row_count` =", value, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountNotEqualTo(Integer value) {
+            addCriterion("`row_count` <>", value, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountGreaterThan(Integer value) {
+            addCriterion("`row_count` >", value, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`row_count` >=", value, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountLessThan(Integer value) {
+            addCriterion("`row_count` <", value, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountLessThanOrEqualTo(Integer value) {
+            addCriterion("`row_count` <=", value, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountIn(List<Integer> values) {
+            addCriterion("`row_count` in", values, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountNotIn(List<Integer> values) {
+            addCriterion("`row_count` not in", values, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountBetween(Integer value1, Integer value2) {
+            addCriterion("`row_count` between", value1, value2, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("`row_count` not between", value1, value2, "rowCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountIsNull() {
+            addCriterion("col_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountIsNotNull() {
+            addCriterion("col_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountEqualTo(Integer value) {
+            addCriterion("col_count =", value, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountNotEqualTo(Integer value) {
+            addCriterion("col_count <>", value, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountGreaterThan(Integer value) {
+            addCriterion("col_count >", value, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("col_count >=", value, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountLessThan(Integer value) {
+            addCriterion("col_count <", value, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountLessThanOrEqualTo(Integer value) {
+            addCriterion("col_count <=", value, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountIn(List<Integer> values) {
+            addCriterion("col_count in", values, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountNotIn(List<Integer> values) {
+            addCriterion("col_count not in", values, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountBetween(Integer value1, Integer value2) {
+            addCriterion("col_count between", value1, value2, "colCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andColCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("col_count not between", value1, value2, "colCount");
             return (Criteria) this;
         }
 

@@ -14,12 +14,15 @@ import com.jiawa.train.business.req.TrainQuery;
 import com.jiawa.train.business.req.TrainReq;
 import com.jiawa.train.business.resp.TrainQueryResp;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class TrainService {
+    private static final Logger Log = LoggerFactory.getLogger(TrainService.class);
 
     @Resource
     private TrainMapper trainMapper;
