@@ -22,7 +22,7 @@ import java.util.List;
 
 @Service
 public class TrainService {
-    private static final Logger Log = LoggerFactory.getLogger(TrainService.class);
+
 
     @Resource
     private TrainMapper trainMapper;
@@ -85,4 +85,5 @@ public class TrainService {
 
         return BeanUtil.copyToList(trains, TrainQueryResp.class);
     }
+
 }

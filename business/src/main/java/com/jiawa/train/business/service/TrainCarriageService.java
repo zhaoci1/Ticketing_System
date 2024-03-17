@@ -6,6 +6,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.Station;
+import com.jiawa.train.business.domain.TrainCarriageExample;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.TrainCarriage;
@@ -27,6 +28,7 @@ public class TrainCarriageService {
     @Resource
     private TrainCarriageMapper trainCarriageMapper;
     private static final Logger LOG = LoggerFactory.getLogger(TrainCarriageService.class);
+
     /**
      * 新增乘车人
      *
@@ -77,5 +79,17 @@ public class TrainCarriageService {
 
     public int delete(Long id) {
         return trainCarriageMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     *
+     * @param trainCode
+     */
+    public List<TrainCarriage> selectByTrainCode(String trainCode) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("`index` asc");
+        TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        return trainCarriageMapper.selectByExample(trainCarriageExample);
     }
 }

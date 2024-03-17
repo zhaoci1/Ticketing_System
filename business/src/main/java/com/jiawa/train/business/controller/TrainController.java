@@ -1,5 +1,6 @@
 package com.jiawa.train.business.controller;
 
+import com.jiawa.train.business.service.TrainSeatService;
 import com.jiawa.train.common.context.LoginMemberContext;
 import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.business.req.TrainQuery;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class TrainController {
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private TrainSeatService trainSeatService;
 
     @PostMapping("/save")
     public AxiosResult save(@Valid @RequestBody TrainReq req) {
@@ -36,5 +40,11 @@ public class TrainController {
     @GetMapping("/queryAll")
     public AxiosResult queryList() {
         return AxiosResult.success(trainService.queryAll());
+    }
+
+    @GetMapping("/gen-seat/{trainCode}")
+    public AxiosResult genSeat(@PathVariable String trainCode) {
+        trainSeatService.genTrainSeat(trainCode);
+        return AxiosResult.success("ok");
     }
 }
