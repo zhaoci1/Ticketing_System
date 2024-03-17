@@ -15,6 +15,9 @@ let Axios = {
   delete(id) {
     return myAxios.delete("business/admin/train/delete/"+id);
   },
+  genSeat(trainCode) {
+    return myAxios.get("business/admin/train/gen-seat/"+trainCode);
+  },
 };
 
 export default Axios;

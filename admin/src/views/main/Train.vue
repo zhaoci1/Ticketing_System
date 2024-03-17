@@ -25,6 +25,14 @@
               <a style="color: red">删除</a>
             </a-popconfirm>
             <a @click="onEdit(record)">编辑</a>
+            <a-popconfirm
+              title="删除生成座位将删除已有记录，确认生成座位?"
+              @confirm="genSeat(record)"
+              ok-text="确认"
+              cancel-text="取消"
+            >
+              <a>生成座位</a>
+            </a-popconfirm>
           </a-space>
         </template>
         <template v-else-if="column.dataIndex === 'type'">
@@ -180,7 +188,7 @@ export default defineComponent({
             tonType: "none",
           }).replaceAll(" ", "");
         } else {
-            train.value.startPinyin = "";
+          train.value.startPinyin = "";
         }
       },
       { immediate: true }
@@ -193,7 +201,7 @@ export default defineComponent({
             tonType: "none",
           }).replaceAll(" ", "");
         } else {
-            train.value.endPinyin = "";
+          train.value.endPinyin = "";
         }
       },
       { immediate: true }
@@ -262,6 +270,11 @@ export default defineComponent({
         }
       });
     };
+    const genSeat = (record) => {
+      Axios.genSeat(record.code).then(res=>{
+        message.success("生成成功");
+      })
+    };
     onMounted(() => {
       handleQuery({
         page: pagination.value.current,
@@ -283,6 +296,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      genSeat,
     };
   },
 });
