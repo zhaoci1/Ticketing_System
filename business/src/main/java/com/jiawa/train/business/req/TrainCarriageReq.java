@@ -39,7 +39,7 @@ public class TrainCarriageReq {
     /**
      * 座位数
      */
-    @NotNull(message = "【座位数】不能为空")
+//    @NotNull(message = "【座位数】不能为空")
     private Integer seatCount;
 
     /**
@@ -51,7 +51,7 @@ public class TrainCarriageReq {
     /**
      * 列数
      */
-    @NotNull(message = "【列数】不能为空")
+//    @NotNull(message = "【列数】不能为空")
     private Integer colCount;
 
     /**
