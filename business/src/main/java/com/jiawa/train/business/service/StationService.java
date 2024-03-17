@@ -43,10 +43,8 @@ public class StationService {
 
         if (ObjectUtil.isNull(station.getId())) {
 //            保存之前先校验唯一键是否存在
-            StationExample stationExample = new StationExample();
-            stationExample.createCriteria().andNameEqualTo(req.getName());
-            List<Station> list = stationMapper.selectByExample(stationExample);
-            if (CollUtil.isNotEmpty(list)) {
+            Station stationDB = selectByUnique(req.getName());
+            if (ObjectUtil.isNotEmpty(stationDB)) {
 //                进入条件则说明重复了，需要抛异常
                 throw new BusinessException(BusinessExceptionEnum.BUSINESS_STATION_NAME_UNIQUE_ERROR);
             }
@@ -61,6 +59,18 @@ public class StationService {
         }
 
         return state;
+    }
+
+    private Station selectByUnique(String name) {
+        StationExample stationExample = new StationExample();
+        stationExample.createCriteria().andNameEqualTo(name);
+        List<Station> list = stationMapper.selectByExample(stationExample);
+        if (CollUtil.isNotEmpty(list)) {
+//                进入条件则说明重复了，需要抛异常
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
     public PageResp<StationQueryResp> queryList(StationQuery req) {
