@@ -29,16 +29,16 @@ export default defineComponent({
   props: ["modelValue"],
   //   定义一个事件change
   emits: ["update:modelValue", "change"],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     let trainAll = ref([]);
     let trainCode = ref();
+
     const filterTrainCodeOption = (input, option) => {
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
     const queryTrainAll = () => {
       Axios.queryAll().then((res) => {
         trainAll.value = res.data;
-        console.log(res);
       });
     };
     /**
@@ -68,6 +68,7 @@ export default defineComponent({
       queryTrainAll,
       filterTrainCodeOption,
       onChange,
+      trainCode,
     };
   },
 });

@@ -21,7 +21,6 @@ myAxios.interceptors.request.use(
 // 设置响应拦截器
 myAxios.interceptors.response.use(
   function (response) {
-    console.log("返回结果", response);
     return response.data;
   },
   function (error) {

@@ -55,7 +55,7 @@
         :wrapper-col="{ span: 20 }"
       >
         <a-form-item label="车次编号">
-          <the-select v-model="train.code"></the-select>
+          <a-input v-model:value="train.code" :disabled="!!train.id" />
         </a-form-item>
         <a-form-item label="车次类型">
           <a-select v-model:value="train.type">
@@ -271,9 +271,9 @@ export default defineComponent({
       });
     };
     const genSeat = (record) => {
-      Axios.genSeat(record.code).then(res=>{
+      Axios.genSeat(record.code).then((res) => {
         message.success("生成成功");
-      })
+      });
     };
     onMounted(() => {
       handleQuery({

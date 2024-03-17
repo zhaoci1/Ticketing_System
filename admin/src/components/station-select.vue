@@ -6,7 +6,7 @@
       allowClear
       :filterOption="filterNameOption"
       @change="onChange"
-      placeholder="请选择车次"
+      placeholder="请选择站名"
       
     >
       <a-select-option
@@ -69,6 +69,7 @@ export default defineComponent({
       queryStationAll,
       filterNameOption,
       onChange,
+      name
     };
   },
 });
