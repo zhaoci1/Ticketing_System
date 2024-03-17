@@ -1,14 +1,16 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.*;
+import com.jiawa.train.common.exception.BusinessException;
+import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
-import com.jiawa.train.business.domain.TrainStation;
-import com.jiawa.train.business.domain.TrainStationExample;
 import com.jiawa.train.business.mapper.TrainStationMapper;
 import com.jiawa.train.business.req.TrainStationQuery;
 import com.jiawa.train.business.req.TrainStationReq;
@@ -36,6 +38,16 @@ public class TrainStationService {
         int state;
 
         if (ObjectUtil.isNull(trainStation.getId())) {
+            TrainStation trainStationDB = selectByUnique(req.getTrainCode(), req.getIndex());
+            if (ObjectUtil.isNotEmpty(trainStationDB)) {
+//                进入条件则说明重复了，需要抛异常
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR);
+            }
+            trainStationDB = selectByUnique(req.getTrainCode(), req.getName());
+            if (ObjectUtil.isNotEmpty(trainStationDB)) {
+//                进入条件则说明重复了，需要抛异常
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_NAME_UNIQUE_ERROR);
+            }
             //        获取当前登录的会员id
             trainStation.setId(SnowUtil.getSnowflakeNextId());
             trainStation.setCreateTime(now);
@@ -75,5 +87,33 @@ public class TrainStationService {
 
     public int delete(Long id) {
         return trainStationMapper.deleteByPrimaryKey(id);
+    }
+
+    private TrainStation selectByUnique(String trainCode, Integer index) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.createCriteria().
+                andTrainCodeEqualTo(trainCode).
+                andIndexEqualTo(index);
+        List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
+        if (CollUtil.isNotEmpty(list)) {
+//                进入条件则说明重复了，需要抛异常
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    private TrainStation selectByUnique(String trainCode, String name) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.createCriteria().
+                andTrainCodeEqualTo(trainCode).
+                andNameEqualTo(name);
+        List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
+        if (CollUtil.isNotEmpty(list)) {
+//                进入条件则说明重复了，需要抛异常
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 }

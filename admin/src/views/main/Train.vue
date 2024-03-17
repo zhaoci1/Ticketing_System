@@ -237,7 +237,7 @@ export default defineComponent({
             size: pagination.value.pageSize,
           });
         } else {
-          message.error("保存失败");
+          message.error(res.message);
         }
         console.log(res);
       });

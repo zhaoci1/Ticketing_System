@@ -1,16 +1,17 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.Station;
-import com.jiawa.train.business.domain.TrainCarriageExample;
+import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.SeatColEnum;
+import com.jiawa.train.common.exception.BusinessException;
+import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
-import com.jiawa.train.business.domain.TrainCarriage;
 import com.jiawa.train.business.domain.TrainCarriageExample;
 import com.jiawa.train.business.mapper.TrainCarriageMapper;
 import com.jiawa.train.business.req.TrainCarriageQuery;
@@ -45,6 +46,11 @@ public class TrainCarriageService {
         int state;
 
         if (ObjectUtil.isNull(trainCarriage.getId())) {
+            TrainCarriage trainCarriageDB = selectByUnique(req.getTrainCode(), req.getIndex());
+            if (ObjectUtil.isNotEmpty(trainCarriageDB)) {
+//                进入条件则说明重复了，需要抛异常
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CARRIAGE_INDEX_UNIQUE_ERROR);
+            }
             //        获取当前登录的会员id
             trainCarriage.setId(SnowUtil.getSnowflakeNextId());
             trainCarriage.setCreateTime(now);
@@ -94,5 +100,19 @@ public class TrainCarriageService {
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
         criteria.andTrainCodeEqualTo(trainCode);
         return trainCarriageMapper.selectByExample(trainCarriageExample);
+    }
+
+    private TrainCarriage selectByUnique(String trainCode, Integer index) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.createCriteria().
+                andTrainCodeEqualTo(trainCode).
+                andIndexEqualTo(index);
+        List<TrainCarriage> list = trainCarriageMapper.selectByExample(trainCarriageExample);
+        if (CollUtil.isNotEmpty(list)) {
+//                进入条件则说明重复了，需要抛异常
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 }

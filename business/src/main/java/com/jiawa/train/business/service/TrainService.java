@@ -1,10 +1,15 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.TrainCarriage;
+import com.jiawa.train.business.domain.TrainCarriageExample;
+import com.jiawa.train.common.exception.BusinessException;
+import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.Train;
@@ -39,6 +44,12 @@ public class TrainService {
         int state;
 
         if (ObjectUtil.isNull(train.getId())) {
+
+            Train trainDB = selectByUnique(req.getCode());
+            if (ObjectUtil.isNotEmpty(trainDB)) {
+//                进入条件则说明重复了，需要抛异常
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CODE_UNIQUE_ERROR);
+            }
             //        获取当前登录的会员id
             train.setId(SnowUtil.getSnowflakeNextId());
             train.setCreateTime(now);
@@ -86,4 +97,15 @@ public class TrainService {
         return BeanUtil.copyToList(trains, TrainQueryResp.class);
     }
 
+    private Train selectByUnique(String code) {
+        TrainExample trainExample = new TrainExample();
+        trainExample.createCriteria().andCodeEqualTo(code);
+        List<Train> list = trainMapper.selectByExample(trainExample);
+        if (CollUtil.isNotEmpty(list)) {
+//                进入条件则说明重复了，需要抛异常
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
 }
