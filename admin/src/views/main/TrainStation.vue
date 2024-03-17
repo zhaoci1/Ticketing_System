@@ -73,6 +73,7 @@
             v-model:value="trainStation.stopTime"
             valueFormat="HH:mm:ss"
             placeholder="请选择时间"
+            disabled
           />
         </a-form-item>
         <a-form-item label="里程（公里）">
@@ -90,6 +91,7 @@ import { defineComponent, ref, onMounted, watch } from "vue";
 import { pinyin } from "pinyin-pro";
 import theSelect from "@/components/the-select.vue";
 import StationSelect from "@/components/station-select.vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: { theSelect, StationSelect },
@@ -177,6 +179,32 @@ export default defineComponent({
         } else {
           trainStation.value.namePinyin = "";
         }
+      },
+      { immediate: true }
+    );
+    watch(
+      () => trainStation.value.inTime,
+      () => {
+        let diff = dayjs(trainStation.value.outTime, "HH:mm:ss").diff(
+          dayjs(trainStation.value.inTime, "HH:mm:ss"),
+          "seconds"
+        );
+        trainStation.value.stopTime = dayjs("00:00:00", "HH:mm:ss")
+          .second(diff)
+          .format("HH:mm:ss");
+      },
+      { immediate: true }
+    );
+    watch(
+      () => trainStation.value.outTime,
+      () => {
+        let diff = dayjs(trainStation.value.outTime, "HH:mm:ss").diff(
+          dayjs(trainStation.value.inTime, "HH:mm:ss"),
+          "seconds"
+        );
+        trainStation.value.stopTime = dayjs("00:00:00", "HH:mm:ss")
+          .second(diff)
+          .format("HH:mm:ss");
       },
       { immediate: true }
     );
