@@ -7,7 +7,7 @@
       </a-space>
     </p>
     <a-table
-      :dataSource="trains"
+      :dataSource="dailyTrains"
       :columns="columns"
       :pagination="pagination"
       @change="handleTableChange"
@@ -25,42 +25,39 @@
               <a style="color: red">删除</a>
             </a-popconfirm>
             <a @click="onEdit(record)">编辑</a>
-            <a-popconfirm
-              title="删除生成座位将删除已有记录，确认生成座位?"
-              @confirm="genSeat(record)"
-              ok-text="确认"
-              cancel-text="取消"
-            >
-              <a>生成座位</a>
-            </a-popconfirm>
           </a-space>
         </template>
         <template v-else-if="column.dataIndex === 'type'">
           <span v-for="item in TRAIN_TYPE_ARRAY" :key="item.code">
-            <span v-if="item.code === record.type">
-              {{ item.desc }}
-            </span>
+            <span v-if="item.code === record.type"> {{ item.desc }}</span>
           </span>
         </template>
       </template>
     </a-table>
     <a-modal
       v-model:visible="visible"
-      title="车次"
+      title="每日车次"
       @ok="handleOk"
       ok-text="确认"
       cancel-text="取消"
     >
       <a-form
-        :model="train"
+        :model="dailyTrain"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 20 }"
       >
+        <a-form-item label="日期">
+          <a-date-picker
+            v-model:value="dailyTrain.date"
+            valueFormat="YYYY-MM-DD"
+            placeholder="请选择日期"
+          />
+        </a-form-item>
         <a-form-item label="车次编号">
-          <a-input v-model:value="train.code" :disabled="!!train.id" />
+          <a-input v-model:value="dailyTrain.code" />
         </a-form-item>
         <a-form-item label="车次类型">
-          <a-select v-model:value="train.type">
+          <a-select v-model:value="dailyTrain.type">
             <a-select-option
               v-for="item in TRAIN_TYPE_ARRAY"
               :key="item.code"
@@ -71,27 +68,27 @@
           </a-select>
         </a-form-item>
         <a-form-item label="始发站">
-          <station-select v-model="train.start"></station-select>
+          <a-input v-model:value="dailyTrain.start" />
         </a-form-item>
         <a-form-item label="始发站拼音">
-          <a-input v-model:value="train.startPinyin" disabled />
+          <a-input v-model:value="dailyTrain.startPinyin" />
         </a-form-item>
         <a-form-item label="出发时间">
           <a-time-picker
-            v-model:value="train.startTime"
+            v-model:value="dailyTrain.startTime"
             valueFormat="HH:mm:ss"
             placeholder="请选择时间"
           />
         </a-form-item>
         <a-form-item label="终点站">
-          <station-select v-model="train.end"></station-select>
+          <a-input v-model:value="dailyTrain.end" />
         </a-form-item>
         <a-form-item label="终点站拼音">
-          <a-input v-model:value="train.endPinyin" disabled />
+          <a-input v-model:value="dailyTrain.endPinyin" />
         </a-form-item>
         <a-form-item label="到站时间">
           <a-time-picker
-            v-model:value="train.endTime"
+            v-model:value="dailyTrain.endTime"
             valueFormat="HH:mm:ss"
             placeholder="请选择时间"
           />
@@ -102,24 +99,21 @@
 </template>
 
 <script>
-import Axios from "@/api/trainApi";
+import Axios from "@/api/dailyTrainApi";
 import { message } from "ant-design-vue";
-import { defineComponent, ref, onMounted, watch } from "vue";
-import { pinyin } from "pinyin-pro";
-import stationSelect from "@/components/station-select.vue";
-import TheSelect from "@/components/the-select.vue";
+import { defineComponent, ref, onMounted } from "vue";
 
 export default defineComponent({
-  components: { stationSelect, TheSelect },
-  name: "train-view",
+  name: "daily-train-view",
   setup() {
     const TRAIN_TYPE_ARRAY = window.TRAIN_TYPE_ARRAY;
     const visible = ref(false);
-    let train = ref({
+    let dailyTrain = ref({
       id: undefined,
+      date: undefined,
       code: undefined,
       type: undefined,
-      start: "12312312",
+      start: undefined,
       startPinyin: undefined,
       startTime: undefined,
       end: undefined,
@@ -134,9 +128,14 @@ export default defineComponent({
       current: 1,
       pageSize: 2,
     });
-    const trains = ref([]);
+    const dailyTrains = ref([]);
 
     const columns = [
+      {
+        title: "日期",
+        dataIndex: "date",
+        key: "date",
+      },
       {
         title: "车次编号",
         dataIndex: "code",
@@ -182,38 +181,12 @@ export default defineComponent({
         dataIndex: "operation",
       },
     ];
-    watch(
-      () => train.value.start,
-      () => {
-        if (train.value.start != null) {
-          train.value.startPinyin = pinyin(train.value.start, {
-            tonType: "none",
-          }).replaceAll(" ", "");
-        } else {
-          train.value.startPinyin = "";
-        }
-      },
-      { immediate: true }
-    );
-    watch(
-      () => train.value.end,
-      () => {
-        if (train.value.end != null) {
-          train.value.endPinyin = pinyin(train.value.end, {
-            tonType: "none",
-          }).replaceAll(" ", "");
-        } else {
-          train.value.endPinyin = "";
-        }
-      },
-      { immediate: true }
-    );
     const onAdd = () => {
-      train.value = {};
+      dailyTrain.value = {};
       visible.value = true;
     };
     const onEdit = (record) => {
-      train.value = { ...record };
+      dailyTrain.value = { ...record };
       visible.value = true;
     };
     const onDelete = (record) => {
@@ -230,7 +203,7 @@ export default defineComponent({
       });
     };
     const handleOk = (e) => {
-      Axios.save(train.value).then((res) => {
+      Axios.save(dailyTrain.value).then((res) => {
         if (res.data) {
           message.success("保存成功");
           visible.value = false;
@@ -239,7 +212,7 @@ export default defineComponent({
             size: pagination.value.pageSize,
           });
         } else {
-          message.error(res.message);
+          message.error("保存失败");
         }
         console.log(res);
       });
@@ -264,17 +237,12 @@ export default defineComponent({
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
-          trains.value = res.data.list;
+          dailyTrains.value = res.data.list;
           pagination.value.current = page.page;
           pagination.value.total = res.data.total;
         } else {
           message.error("查询失败");
         }
-      });
-    };
-    const genSeat = (record) => {
-      Axios.genSeat(record.code).then((res) => {
-        message.success("生成成功");
       });
     };
     onMounted(() => {
@@ -285,9 +253,9 @@ export default defineComponent({
     });
     return {
       TRAIN_TYPE_ARRAY,
-      train,
+      dailyTrain,
       visible,
-      trains,
+      dailyTrains,
       handleTableChange,
       columns,
       onMounted,
@@ -298,7 +266,6 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
-      genSeat,
     };
   },
 });

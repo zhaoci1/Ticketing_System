@@ -74,8 +74,8 @@ public class ServerGenerator {
         System.out.println("组织参数：" + param);
 
         System.out.println(serverPath);
-        gen(Domain, param, "service","service");
-        gen(Domain, param, "controller","controller");
+        gen(Domain, param, "service", "service");
+        gen(Domain, param, "controller", "controller");
         gen(Domain, param, "req", "req");
         gen(Domain, param, "req", "query");
         gen(Domain, param, "resp", "queryResp");
@@ -111,8 +111,8 @@ public class ServerGenerator {
      */
     private static void genVue(String do_main, Map<String, Object> param) throws Exception {
         FreemarkerUtil.initConfig("myVue.ftl");
-        new File(vuePath).mkdirs();
-        String fileName = vuePath + do_main + ".vue";
+        new File(vuePath + module).mkdirs();
+        String fileName = vuePath + module + "/" + do_main + ".vue";
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
     }

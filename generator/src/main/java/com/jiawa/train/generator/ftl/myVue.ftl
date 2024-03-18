@@ -32,8 +32,8 @@
                 <#list fieldList as field>
                     <#if field.enums>
                         <template v-else-if="column.dataIndex ==='type'">
-          <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key">
-            <span v-if="item.key===record.type">{{ item.value }}</span>
+          <span v-for="item in ${field.enumsConst}_ARRAY" :key="item.code">
+            <span v-if="item.code===record.${field.nameHump}"> {{item.desc}}</span>
           </span>
                         </template>
                     </#if>

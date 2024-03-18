@@ -173,14 +173,24 @@ export default {
      */
     const handleQuery = () => {
       Axios.query().then((res) => {
-        jobs.value = res.data
+        jobs.value = res.data;
         console.log(res.data);
       });
     };
     /**
      * 手动执行一遍定时任务
      */
-    const handleRun = (record) => {};
+    const handleRun = (record) => {
+      Axios.resume(record).then((res) => {
+        if (res.data) {
+          modalVisible.value = false;
+          notification.success({ description: "执行成功" });
+          handleQuery();
+        } else {
+          notification.success({ description: res.message });
+        }
+      });
+    };
 
     /**
      * 重启任务

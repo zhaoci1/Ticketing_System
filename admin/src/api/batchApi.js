@@ -32,6 +32,12 @@ let Axios = {
       group: req.group,
     });
   },
+  run(req) {
+    return myAxios.post("batch/admin/job/run", {
+      name: req.name,
+      group: req.group,
+    });
+  },
 };
 
 export default Axios;

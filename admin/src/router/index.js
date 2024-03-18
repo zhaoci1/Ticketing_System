@@ -43,7 +43,16 @@ const routes = [
         children: [
           {
             path: "job",
-            component: () => import("../views/main/JobT.vue"),
+            component: () => import("../views/main/batch/JobT.vue"),
+          },
+        ],
+      },
+      {
+        path: "business/",
+        children: [
+          {
+            path: "daily-train",
+            component: () => import("../views/main/business/DailyTrain.vue"),
           },
         ],
       },
