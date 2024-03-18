@@ -2,7 +2,13 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="handleQuery()">刷新</a-button>
+        <a-date-picker
+          v-model:value="param.date"
+          valueFormat="YYYY-MM-DD"
+          placeholder="请选择日期"
+        />
+        <the-select v-model="param.trainCode"></the-select>
+        <a-button type="primary" @click="handleQuery()">查询</a-button>
         <a-button type="primary" @click="onAdd">新增</a-button>
       </a-space>
     </p>
@@ -49,16 +55,16 @@
           />
         </a-form-item>
         <a-form-item label="车次编号">
-          <a-input v-model:value="dailyTrainStation.trainCode" />
+          <the-select v-model="dailyTrainStation.trainCode"></the-select>
         </a-form-item>
         <a-form-item label="站序">
           <a-input v-model:value="dailyTrainStation.index" />
         </a-form-item>
         <a-form-item label="站名">
-          <a-input v-model:value="dailyTrainStation.name" />
+          <station-select v-model="dailyTrainStation.name"></station-select>
         </a-form-item>
         <a-form-item label="站名拼音">
-          <a-input v-model:value="dailyTrainStation.namePinyin" />
+          <a-input v-model:value="dailyTrainStation.namePinyin" disabled />
         </a-form-item>
         <a-form-item label="进站时间">
           <a-time-picker
@@ -79,6 +85,7 @@
             v-model:value="dailyTrainStation.stopTime"
             valueFormat="HH:mm:ss"
             placeholder="请选择时间"
+            disabled
           />
         </a-form-item>
         <a-form-item label="里程（公里）">
@@ -91,10 +98,14 @@
 
 <script>
 import Axios from "@/api/dailyTrainStationApi";
+import StationSelect from "@/components/station-select.vue";
+import theSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
-import { defineComponent, ref, onMounted } from "vue";
-
+import { pinyin } from "pinyin-pro";
+import { defineComponent, ref, onMounted, watch } from "vue";
+import dayjs from "dayjs";
 export default defineComponent({
+  components: { theSelect, StationSelect },
   name: "daily-train-station-view",
   setup() {
     const visible = ref(false);
@@ -117,6 +128,9 @@ export default defineComponent({
       total: 0,
       current: 1,
       pageSize: 2,
+    });
+    let param = ref({
+      trainCode: null,
     });
     const dailyTrainStations = ref([]);
 
@@ -224,6 +238,8 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      page.code = param.value.trainCode;
+      page.date = param.value.date;
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -235,6 +251,50 @@ export default defineComponent({
         }
       });
     };
+    watch(
+      () => dailyTrainStation.value.name,
+      () => {
+        if (dailyTrainStation.value.name != null) {
+          dailyTrainStation.value.namePinyin = pinyin(
+            dailyTrainStation.value.name,
+            {
+              tonType: "none",
+            }
+          ).replaceAll(" ", "");
+        } else {
+          dailyTrainStation.value.namePinyin = "";
+        }
+      },
+      { immediate: true }
+    );
+    watch(
+      () => dailyTrainStation.value.inTime,
+      () => {
+        let diff = dayjs(dailyTrainStation.value.outTime, "HH:mm:ss").diff(
+          dayjs(dailyTrainStation.value.inTime, "HH:mm:ss"),
+          "seconds"
+        );
+        dailyTrainStation.value.stopTime = dayjs("00:00:00", "HH:mm:ss")
+          .second(diff)
+          .format("HH:mm:ss");
+      },
+      { immediate: true }
+    );
+
+    // 自动计算停车时长
+    watch(
+      () => dailyTrainStation.value.outTime,
+      () => {
+        let diff = dayjs(dailyTrainStation.value.outTime, "HH:mm:ss").diff(
+          dayjs(dailyTrainStation.value.inTime, "HH:mm:ss"),
+          "seconds"
+        );
+        dailyTrainStation.value.stopTime = dayjs("00:00:00", "HH:mm:ss")
+          .second(diff)
+          .format("HH:mm:ss");
+      },
+      { immediate: true }
+    );
     onMounted(() => {
       handleQuery({
         page: pagination.value.current,
@@ -255,6 +315,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      param,
     };
   },
 });

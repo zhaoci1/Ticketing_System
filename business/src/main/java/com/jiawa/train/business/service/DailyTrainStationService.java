@@ -51,8 +51,16 @@ public class DailyTrainStationService {
 
     public PageResp<DailyTrainStationQueryResp> queryList(DailyTrainStationQuery req) {
         DailyTrainStationExample dailyTrainStationExample = new DailyTrainStationExample();
-        dailyTrainStationExample.setOrderByClause("id desc");
+        dailyTrainStationExample.setOrderByClause("date desc,train_code asc,`index` asc");
         DailyTrainStationExample.Criteria criteria = dailyTrainStationExample.createCriteria();
+
+        if (ObjectUtil.isNotNull(req.getDate())) {
+            criteria.andDateEqualTo(req.getDate());
+        }
+
+        if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
 //        类似于limit(1,2);
         PageHelper.startPage(req.getPage(), req.getSize());
