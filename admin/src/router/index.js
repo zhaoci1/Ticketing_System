@@ -58,6 +58,10 @@ const routes = [
             path: "daily-train_station",
             component: () => import("../views/main/business/DailyTrainStation.vue"),
           },
+          {
+            path: "daily-train_carriage",
+            component: () => import("../views/main/business/DailyTrainCarriage.vue"),
+          },
         ],
       },
     ],
