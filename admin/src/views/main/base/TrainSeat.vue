@@ -28,14 +28,20 @@
             <a @click="onEdit(record)">编辑</a>
           </a-space>
         </template>
-        <template v-else-if="column.dataIndex === 'type'">
-          <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key">
-            <span v-if="item.key === record.type">{{ item.value }}</span>
+        <template v-else-if="column.dataIndex === 'col'">
+          <span v-for="item in SEAT_COL_ARRAY" :key="item.code">
+            <span
+              v-if="item.code === record.col && item.type === record.seatType"
+            >
+              {{ item.desc }}
+            </span>
           </span>
         </template>
-        <template v-else-if="column.dataIndex === 'type'">
-          <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key">
-            <span v-if="item.key === record.type">{{ item.value }}</span>
+        <template v-else-if="column.dataIndex === 'seatType'">
+          <span v-for="item in SEAT_TYPE_ARRAY" :key="item.code">
+            <span v-if="item.code === record.seatType">
+              {{ item.desc }}
+            </span>
           </span>
         </template>
       </template>

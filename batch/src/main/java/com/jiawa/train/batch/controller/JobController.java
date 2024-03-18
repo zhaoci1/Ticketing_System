@@ -74,7 +74,7 @@ public class JobController {
             axiosResult.setMessage("创建定时任务失败：任务类不存在");
         }
         LOG.info("创建定时任务结束：{}", axiosResult);
-        return axiosResult;
+        return AxiosResult.success(true);
     }
 
     @RequestMapping(value = "/pause")
@@ -92,7 +92,7 @@ public class JobController {
             axiosResult.setMessage("暂停定时任务失败:调度异常");
         }
         LOG.info("暂停定时任务结束：{}", axiosResult);
-        return axiosResult;
+        return AxiosResult.success(true);
     }
 
     @RequestMapping(value = "/resume")
@@ -110,7 +110,7 @@ public class JobController {
             axiosResult.setMessage("重启定时任务失败:调度异常");
         }
         LOG.info("重启定时任务结束：{}", axiosResult);
-        return axiosResult;
+        return AxiosResult.success(true);
     }
 
     @RequestMapping(value = "/reschedule")
@@ -141,7 +141,7 @@ public class JobController {
             axiosResult.setMessage("更新定时任务失败:调度异常");
         }
         LOG.info("更新定时任务结束：{}", axiosResult);
-        return axiosResult;
+        return AxiosResult.success(true);
     }
 
     @RequestMapping(value = "/delete")
@@ -161,7 +161,7 @@ public class JobController {
             axiosResult.setMessage("删除定时任务失败:调度异常");
         }
         LOG.info("删除定时任务结束：{}", axiosResult);
-        return axiosResult;
+        return AxiosResult.success(true);
     }
 
     @RequestMapping(value = "/query")

@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import store from "@/store";
-import { notification } from "ant-design-vue";
 
 const routes = [
   {
@@ -16,24 +14,38 @@ const routes = [
         component: () => import("../views/main/About.vue"),
       },
       {
-        path: "station",
-        component: () => import("../views/main/Station.vue"),
+        path: "base/",
+        children: [
+          {
+            path: "station",
+            component: () => import("../views/main/base/Station.vue"),
+          },
+          {
+            path: "train",
+            component: () => import("../views/main/base/Train.vue"),
+          },
+          {
+            path: "train-station",
+            component: () => import("../views/main/base/TrainStation.vue"),
+          },
+          {
+            path: "train-carriage",
+            component: () => import("../views/main/base/TrainCarriage.vue"),
+          },
+          {
+            path: "train-seat",
+            component: () => import("../views/main/base/TrainSeat.vue"),
+          },
+        ],
       },
       {
-        path: "train",
-        component: () => import("../views/main/Train.vue"),
-      },
-      {
-        path: "train-station",
-        component: () => import("../views/main/TrainStation.vue"),
-      },
-      {
-        path: "train-carriage",
-        component: () => import("../views/main/TrainCarriage.vue"),
-      },
-      {
-        path: "train-seat",
-        component: () => import("../views/main/TrainSeat.vue"),
+        path: "batch/",
+        children: [
+          {
+            path: "job",
+            component: () => import("../views/main/JobT.vue"),
+          },
+        ],
       },
     ],
   },
