@@ -36,6 +36,9 @@ public class AxiosResult<T> {
     public static <T> AxiosResult<T> success(T data) {
         return getAxiosResult(EnumStatus.OK, data);
     }
+    public static <T> AxiosResult<T> error(T data) {
+        return getAxiosResult(EnumStatus.ERROR, data);
+    }
 
     private static <T> AxiosResult<T> getAxiosResult(EnumStatus enumStatus, T data) {
         return new AxiosResult<T>(enumStatus, data);
