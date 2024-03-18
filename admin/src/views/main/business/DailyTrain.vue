@@ -54,7 +54,10 @@
           />
         </a-form-item>
         <a-form-item label="车次编号">
-          <a-input v-model:value="dailyTrain.code" />
+          <the-select
+            v-model="dailyTrain.trainCode"
+            @change="onChangeCode"
+          ></the-select>
         </a-form-item>
         <a-form-item label="车次类型">
           <a-select v-model:value="dailyTrain.type">
@@ -100,10 +103,13 @@
 
 <script>
 import Axios from "@/api/dailyTrainApi";
+import theSelect from "@/components/the-select.vue";
+import TheSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted } from "vue";
 
 export default defineComponent({
+  components: { theSelect },
   name: "daily-train-view",
   setup() {
     const TRAIN_TYPE_ARRAY = window.TRAIN_TYPE_ARRAY;
@@ -245,6 +251,12 @@ export default defineComponent({
         }
       });
     };
+    const onChangeCode = (train) => {
+      console.log(train);
+      let t = { ...train };
+      delete t.id;
+      dailyTrain.value = Object.assign(dailyTrain.value, t);
+    };
     onMounted(() => {
       handleQuery({
         page: pagination.value.current,
@@ -266,6 +278,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      onChangeCode,
     };
   },
 });
