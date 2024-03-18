@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.DailyTrainCarriage;
@@ -32,6 +33,10 @@ public class DailyTrainCarriageService {
      */
     public int save(DailyTrainCarriageReq req) {
         DateTime now = DateTime.now();
+        List<SeatColEnum> colsByType = SeatColEnum.getColsByType(req.getSeatType());
+        req.setColCount(colsByType.size());
+        req.setSeatCount(req.getColCount() * req.getRowCount());
+
         DailyTrainCarriage dailyTrainCarriage = BeanUtil.copyProperties(req, DailyTrainCarriage.class);
         int state;
 
@@ -51,8 +56,16 @@ public class DailyTrainCarriageService {
 
     public PageResp<DailyTrainCarriageQueryResp> queryList(DailyTrainCarriageQuery req) {
         DailyTrainCarriageExample dailyTrainCarriageExample = new DailyTrainCarriageExample();
-        dailyTrainCarriageExample.setOrderByClause("id desc");
+        dailyTrainCarriageExample.setOrderByClause("date desc,train_code asc,`index` asc");
         DailyTrainCarriageExample.Criteria criteria = dailyTrainCarriageExample.createCriteria();
+
+        if (ObjectUtil.isNotNull(req.getDate())) {
+            criteria.andDateEqualTo(req.getDate());
+        }
+
+        if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
 //        类似于limit(1,2);
         PageHelper.startPage(req.getPage(), req.getSize());

@@ -3,7 +3,7 @@
     <a-menu
       v-model:selectedKeys="selectedKeys"
       mode="inline"
-      :openKeys="['batch', 'base','business']"
+      :openKeys="['batch', 'base', 'business']"
       :style="{ height: '100%', borderRight: 0 }"
     >
       <a-menu-item key="/welcome">
@@ -37,7 +37,7 @@
           </router-link>
         </a-menu-item>
       </a-sub-menu>
-      
+
       <a-sub-menu key="base">
         <template #title>
           <span>
@@ -84,7 +84,6 @@
           </router-link>
         </a-menu-item>
       </a-sub-menu>
-  
     </a-menu>
   </a-layout-sider>
 </template>

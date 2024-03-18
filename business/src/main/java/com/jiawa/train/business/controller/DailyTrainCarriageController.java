@@ -18,7 +18,6 @@ public class DailyTrainCarriageController {
 
     @PostMapping("/save")
     public AxiosResult save(@Valid @RequestBody DailyTrainCarriageReq req) {
-        System.out.println(req);
         int save = dailyTrainCarriageService.save(req);
         return AxiosResult.success(save >= 1);
     }

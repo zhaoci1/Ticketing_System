@@ -2,7 +2,13 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="handleQuery()">刷新</a-button>
+        <a-date-picker
+          v-model:value="param.date"
+          valueFormat="YYYY-MM-DD"
+          placeholder="请选择日期"
+        />
+        <the-select v-model="param.trainCode"></the-select>
+        <a-button type="primary" @click="handleQuery()">查询</a-button>
         <a-button type="primary" @click="onAdd">新增</a-button>
       </a-space>
     </p>
@@ -54,7 +60,7 @@
           />
         </a-form-item>
         <a-form-item label="车次编号">
-          <a-input v-model:value="dailyTrainCarriage.trainCode" />
+            <the-select v-model="dailyTrainCarriage.trainCode"></the-select>
         </a-form-item>
         <a-form-item label="箱序">
           <a-input v-model:value="dailyTrainCarriage.index" />
@@ -70,14 +76,8 @@
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="座位数">
-          <a-input v-model:value="dailyTrainCarriage.seatCount" />
-        </a-form-item>
         <a-form-item label="排数">
           <a-input v-model:value="dailyTrainCarriage.rowCount" />
-        </a-form-item>
-        <a-form-item label="列数">
-          <a-input v-model:value="dailyTrainCarriage.colCount" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -86,10 +86,12 @@
 
 <script>
 import Axios from "@/api/dailyTrainCarriageApi";
+import theSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted } from "vue";
 
 export default defineComponent({
+    components: { theSelect },
   name: "daily-train-carriage-view",
   setup() {
     const SEAT_TYPE_ARRAY = window.SEAT_TYPE_ARRAY;
@@ -111,6 +113,9 @@ export default defineComponent({
       total: 0,
       current: 1,
       pageSize: 2,
+    });
+    let param = ref({
+      trainCode: null,
     });
     const dailyTrainCarriages = ref([]);
 
@@ -208,6 +213,8 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      page.code = param.value.trainCode;
+      page.date = param.value.date;
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -240,6 +247,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      param,
     };
   },
 });
