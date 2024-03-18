@@ -5,6 +5,9 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.Train;
+import com.jiawa.train.common.exception.BusinessException;
+import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.DailyTrain;
@@ -51,8 +54,17 @@ public class DailyTrainService {
 
     public PageResp<DailyTrainQueryResp> queryList(DailyTrainQuery req) {
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
-        dailyTrainExample.setOrderByClause("id desc");
+        dailyTrainExample.setOrderByClause("date desc,code asc");
         DailyTrainExample.Criteria criteria = dailyTrainExample.createCriteria();
+
+        if (ObjectUtil.isNotNull(req.getDate())) {
+            criteria.andDateEqualTo(req.getDate());
+        }
+
+        if (ObjectUtil.isNotEmpty(req.getCode())) {
+            criteria.andCodeEqualTo(req.getCode());
+        }
+
 
 //        类似于limit(1,2);
         PageHelper.startPage(req.getPage(), req.getSize());

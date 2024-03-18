@@ -2,7 +2,13 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="handleQuery()">刷新</a-button>
+        <a-date-picker
+          v-model:value="param.date"
+          valueFormat="YYYY-MM-DD"
+          placeholder="请选择日期"
+        />
+        <the-select v-model="param.code"></the-select>
+        <a-button type="primary" @click="handleQuery()">查询</a-button>
         <a-button type="primary" @click="onAdd">新增</a-button>
       </a-space>
     </p>
@@ -135,7 +141,9 @@ export default defineComponent({
       pageSize: 2,
     });
     const dailyTrains = ref([]);
-
+    let param = ref({
+      code: "",
+    });
     const columns = [
       {
         title: "日期",
@@ -240,6 +248,8 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      page.code = param.value.code;
+      page.date = param.value.date;
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -264,6 +274,7 @@ export default defineComponent({
       });
     });
     return {
+      param,
       TRAIN_TYPE_ARRAY,
       dailyTrain,
       visible,
