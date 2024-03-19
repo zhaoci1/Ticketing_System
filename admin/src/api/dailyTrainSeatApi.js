@@ -9,7 +9,7 @@ let Axios = {
       params: {
         page: page.page,
         size: page.size,
-        trainCode: page.code,
+        trainCode: page.trainCode,
         date: page.date,
       },
     });

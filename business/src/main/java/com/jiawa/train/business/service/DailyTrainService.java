@@ -37,6 +37,8 @@ public class DailyTrainService {
 
     @Resource
     private DailyTrainCarriageService dailyTrainCarriageService;
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
 
     private static final Logger Log = LoggerFactory.getLogger(DailyTrainService.class);
 
@@ -131,6 +133,10 @@ public class DailyTrainService {
 
 //        生成车次的车厢信息
         dailyTrainCarriageService.genDaily(date, train.getCode());
+
+//        生成座位信息
+        dailyTrainSeatService.genDaily(date, train.getCode());
+
 
     }
 }

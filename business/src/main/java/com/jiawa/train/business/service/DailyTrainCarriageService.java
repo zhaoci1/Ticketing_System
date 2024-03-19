@@ -81,11 +81,11 @@ public class DailyTrainCarriageService {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<DailyTrainCarriage> dailyTrainCarriages = dailyTrainCarriageMapper.selectByExample(dailyTrainCarriageExample);
         List<DailyTrainCarriageQueryResp> list = BeanUtil.copyToList(dailyTrainCarriages, DailyTrainCarriageQueryResp.class);
-        PageInfo<DailyTrainCarriageQueryResp> pageInfo = new PageInfo<>(list);
+        PageInfo<DailyTrainCarriage> pageInfo = new PageInfo<>(dailyTrainCarriages);
 
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }

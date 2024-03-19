@@ -75,11 +75,11 @@ public class DailyTrainStationService {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<DailyTrainStation> dailyTrainStations = dailyTrainStationMapper.selectByExample(dailyTrainStationExample);
         List<DailyTrainStationQueryResp> list = BeanUtil.copyToList(dailyTrainStations, DailyTrainStationQueryResp.class);
-        PageInfo<DailyTrainStationQueryResp> pageInfo = new PageInfo<>(list);
+        PageInfo<DailyTrainStation> pageInfo = new PageInfo<>(dailyTrainStations);
 
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }

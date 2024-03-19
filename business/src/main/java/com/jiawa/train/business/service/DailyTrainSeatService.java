@@ -1,21 +1,25 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.*;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
-import com.jiawa.train.business.domain.DailyTrainSeat;
-import com.jiawa.train.business.domain.DailyTrainSeatExample;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.req.DailyTrainSeatQuery;
 import com.jiawa.train.business.req.DailyTrainSeatReq;
 import com.jiawa.train.business.resp.DailyTrainSeatQueryResp;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,6 +27,12 @@ public class DailyTrainSeatService {
 
     @Resource
     private DailyTrainSeatMapper dailyTrainSeatMapper;
+    @Resource
+    private TrainSeatService trainSeatService;
+    @Resource
+    private TrainStationService trainStationService;
+
+    private static final Logger Log = LoggerFactory.getLogger(DailyTrainSeatService.class);
 
     /**
      * 新增乘车人
@@ -51,7 +61,7 @@ public class DailyTrainSeatService {
 
     public PageResp<DailyTrainSeatQueryResp> queryList(DailyTrainSeatQuery req) {
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample.setOrderByClause("train_code asc,carriage_index asc,carriage_seat_index asc");
+        dailyTrainSeatExample.setOrderByClause("date desc,train_code asc,carriage_index asc,carriage_seat_index asc");
         DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
 
         if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
@@ -63,16 +73,49 @@ public class DailyTrainSeatService {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<DailyTrainSeat> dailyTrainSeats = dailyTrainSeatMapper.selectByExample(dailyTrainSeatExample);
         List<DailyTrainSeatQueryResp> list = BeanUtil.copyToList(dailyTrainSeats, DailyTrainSeatQueryResp.class);
-        PageInfo<DailyTrainSeatQueryResp> pageInfo = new PageInfo<>(list);
+        PageInfo<DailyTrainSeat> pageInfo = new PageInfo<>(dailyTrainSeats);
 
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }
 
     public int delete(Long id) {
         return dailyTrainSeatMapper.deleteByPrimaryKey(id);
+    }
+
+    public void genDaily(Date date, String trainCode) {
+        Log.info("开始生成日期：{}车次{}的车站信息", date, trainCode);
+
+        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
+        dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+        dailyTrainSeatMapper.deleteByExample(dailyTrainSeatExample);
+
+//        获取车次的车站信息
+        List<TrainStation> trainStations = trainStationService.selectByTrainCode(trainCode);
+//        获取车站个数
+        String sell = StrUtil.fillBefore("", '0', trainStations.size());
+
+//        查出某车次的所有的车厢信息信息
+        List<TrainSeat> trainSeats = trainSeatService.selectByTrainCode(trainCode);
+
+        if (CollUtil.isEmpty(trainSeats)) {
+            Log.info("该车次没有车站基础数据，生成该车次车站信息结束");
+            return;
+        }
+
+        for (TrainSeat station : trainSeats) {
+            //            生成该车次的数据
+            DateTime now = DateTime.now();
+            DailyTrainSeat dailyTrainSeat = BeanUtil.copyProperties(station, DailyTrainSeat.class);
+            dailyTrainSeat.setId(SnowUtil.getSnowflakeNextId());
+            dailyTrainSeat.setCreateTime(now);
+            dailyTrainSeat.setUpdateTime(now);
+            dailyTrainSeat.setDate(date);
+            dailyTrainSeat.setSell(sell);
+            dailyTrainSeatMapper.insert(dailyTrainSeat);
+        }
     }
 }

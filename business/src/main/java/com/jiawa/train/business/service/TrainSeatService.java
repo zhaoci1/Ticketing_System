@@ -6,12 +6,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.TrainCarriage;
+import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
-import com.jiawa.train.business.domain.TrainSeat;
-import com.jiawa.train.business.domain.TrainSeatExample;
 import com.jiawa.train.business.mapper.TrainSeatMapper;
 import com.jiawa.train.business.req.TrainSeatQuery;
 import com.jiawa.train.business.req.TrainSeatReq;
@@ -136,5 +134,12 @@ public class TrainSeatService {
             }
             System.out.println(trainCarriage);
         }
+    }
+
+    public List<TrainSeat> selectByTrainCode(String trainCode) {
+        TrainSeatExample trainStationExample = new TrainSeatExample();
+        trainStationExample.setOrderByClause("`id` asc");
+        trainStationExample.createCriteria().andTrainCodeEqualTo(trainCode);
+        return trainSeatMapper.selectByExample(trainStationExample);
     }
 }
