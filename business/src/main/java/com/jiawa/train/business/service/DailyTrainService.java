@@ -32,6 +32,9 @@ public class DailyTrainService {
     @Resource
     private TrainService trainService;
 
+    @Resource
+    private DailyTrainStationService dailyTrainStationService;
+
     private static final Logger Log = LoggerFactory.getLogger(DailyTrainService.class);
 
     /**
@@ -119,5 +122,9 @@ public class DailyTrainService {
         dailyTrain.setUpdateTime(now);
         dailyTrain.setDate(date);
         dailyTrainMapper.insert(dailyTrain);
+
+//        生成车次途径的车站信息(每日车站信息)
+        dailyTrainStationService.genDaily(date,train.getCode());
+
     }
 }
