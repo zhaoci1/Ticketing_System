@@ -1,13 +1,12 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.Train;
-import com.jiawa.train.common.exception.BusinessException;
-import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.DailyTrain;
@@ -17,8 +16,11 @@ import com.jiawa.train.business.req.DailyTrainQuery;
 import com.jiawa.train.business.req.DailyTrainReq;
 import com.jiawa.train.business.resp.DailyTrainQueryResp;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,6 +28,11 @@ public class DailyTrainService {
 
     @Resource
     private DailyTrainMapper dailyTrainMapper;
+
+    @Resource
+    private TrainService trainService;
+
+    private static final Logger Log = LoggerFactory.getLogger(DailyTrainService.class);
 
     /**
      * 新增乘车人
@@ -71,16 +78,46 @@ public class DailyTrainService {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<DailyTrain> dailyTrains = dailyTrainMapper.selectByExample(dailyTrainExample);
         List<DailyTrainQueryResp> list = BeanUtil.copyToList(dailyTrains, DailyTrainQueryResp.class);
-        PageInfo<DailyTrainQueryResp> pageInfo = new PageInfo<>(list);
 
+        PageInfo<DailyTrain> pageInfo = new PageInfo<>(dailyTrains);
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(pageInfo.getList());
+        pageResp.setList(list);
         System.out.println(pageResp);
         return pageResp;
     }
 
     public int delete(Long id) {
         return dailyTrainMapper.deleteByPrimaryKey(id);
+    }
+
+    //    生成某日所有车次信息，包括车次，车站，车厢，座位
+    public void genDaily(Date date) {
+//        获取所有车次信息
+        List<Train> trainList = trainService.selectAll();
+//        做空判断，防止空指针异常
+        if (CollUtil.isEmpty(trainList)) {
+            Log.info("没有车次基础数据，任务结束");
+            return;
+        }
+        for (Train train : trainList) {
+            genDailyTrain(date, train);
+        }
+    }
+
+    public void genDailyTrain(Date date, Train train) {
+        //            删除该车次已有的数据
+        DailyTrainExample dailyTrainExample = new DailyTrainExample();
+        dailyTrainExample.createCriteria().andDateEqualTo(date).andCodeEqualTo(train.getCode());
+        dailyTrainMapper.deleteByExample(dailyTrainExample);
+
+//            生成该车次的数据
+        DateTime now = DateTime.now();
+        DailyTrain dailyTrain = BeanUtil.copyProperties(train, DailyTrain.class);
+        dailyTrain.setId(SnowUtil.getSnowflakeNextId());
+        dailyTrain.setCreateTime(now);
+        dailyTrain.setUpdateTime(now);
+        dailyTrain.setDate(date);
+        dailyTrainMapper.insert(dailyTrain);
     }
 }

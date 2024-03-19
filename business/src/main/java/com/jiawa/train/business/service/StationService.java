@@ -83,6 +83,7 @@ public class StationService {
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<Station> stations = stationMapper.selectByExample(stationExample);
         PageInfo<Station> pageInfo = new PageInfo<>(stations);
+
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(pageInfo.getList());
