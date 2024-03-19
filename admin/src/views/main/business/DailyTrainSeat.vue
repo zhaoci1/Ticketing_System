@@ -2,8 +2,8 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="handleQuery()">刷新</a-button>
-        <a-button type="primary" @click="onAdd">新增</a-button>
+        <the-select v-model="param.trainCode"></the-select>
+        <a-button type="primary" @click="handleQuery()">查找</a-button>
       </a-space>
     </p>
     <a-table
@@ -65,7 +65,7 @@
           />
         </a-form-item>
         <a-form-item label="车次编号">
-          <a-input v-model:value="dailyTrainSeat.trainCode" />
+            <the-select v-model="dailyTrainSeat.trainCode"></the-select>
         </a-form-item>
         <a-form-item label="箱序">
           <a-input v-model:value="dailyTrainSeat.carriageIndex" />
@@ -108,10 +108,12 @@
 
 <script>
 import Axios from "@/api/dailyTrainSeatApi";
+import theSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted } from "vue";
 
 export default defineComponent({
+  components: { theSelect },
   name: "daily-train-seat-view",
   setup() {
     const SEAT_COL_ARRAY = window.SEAT_COL_ARRAY;
@@ -131,6 +133,7 @@ export default defineComponent({
       updateTime: undefined,
     });
     let loading = ref(false);
+    let param = ref({});
     const pagination = ref({
       total: 0,
       current: 1,
@@ -179,15 +182,7 @@ export default defineComponent({
         dataIndex: "sell",
         key: "sell",
       },
-      {
-        title: "操作",
-        dataIndex: "operation",
-      },
     ];
-    const onAdd = () => {
-      dailyTrainSeat.value = {};
-      visible.value = true;
-    };
     const onEdit = (record) => {
       dailyTrainSeat.value = { ...record };
       visible.value = true;
@@ -237,6 +232,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      page.trainCode = param.value.trainCode;
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -266,10 +262,10 @@ export default defineComponent({
       handleQuery,
       pagination,
       loading,
-      onAdd,
       handleOk,
       onEdit,
       onDelete,
+      param,
     };
   },
 });
