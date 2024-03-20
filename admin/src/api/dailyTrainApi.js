@@ -20,6 +20,9 @@ let Axios = {
   genSeat(trainCode) {
     return myAxios.get("business/admin/daily-train/gen-seat/" + trainCode);
   },
+  genDaily(date) {
+    return myAxios.get("business/admin/daily-train/gen-daily/" + date);
+  },
 };
 
 export default Axios;

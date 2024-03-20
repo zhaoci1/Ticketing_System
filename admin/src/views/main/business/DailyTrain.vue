@@ -10,8 +10,31 @@
         <the-select v-model="param.code"></the-select>
         <a-button type="primary" @click="handleQuery()">查询</a-button>
         <a-button type="primary" @click="onAdd">新增</a-button>
+        <a-button type="danger" @click="onClickGenDaily"
+          >生成特定日期的车次信息</a-button
+        >
       </a-space>
     </p>
+    <a-modal
+      v-model:visible="genDailyVisible"
+      title="生成车次"
+      @ok="handleGenDailyOk"
+      ok-text="确认"
+      cancel-text="取消"
+    >
+      <a-form
+        :model="genDaily"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 20 }"
+      >
+        <a-form-item label="日期">
+          <a-date-picker
+            v-model:value="genDaily.date"
+            placeholder="请选择日期"
+          ></a-date-picker>
+        </a-form-item>
+      </a-form>
+    </a-modal>
     <a-table
       :dataSource="dailyTrains"
       :columns="columns"
@@ -110,9 +133,9 @@
 <script>
 import Axios from "@/api/dailyTrainApi";
 import theSelect from "@/components/the-select.vue";
-import TheSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted } from "vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: { theSelect },
@@ -140,7 +163,9 @@ export default defineComponent({
       current: 1,
       pageSize: 10,
     });
+    const genDailyVisible = ref(false);
     const dailyTrains = ref([]);
+    let genDaily = ref({});
     let param = ref({
       code: "",
     });
@@ -212,7 +237,20 @@ export default defineComponent({
             size: pagination.value.pageSize,
           });
         } else {
-          message.success("删除失败");
+          message.error("删除失败");
+        }
+      });
+    };
+    const handleGenDailyOk = () => {
+      let date = dayjs(genDaily.value.date).format("YYYY-MM-DD");
+      Axios.genDaily(date).then((res) => {
+        if (res.code == 200) {
+          message.success("生成成功");
+          visible.value = false;
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
         }
       });
     };
@@ -262,10 +300,12 @@ export default defineComponent({
       });
     };
     const onChangeCode = (train) => {
-      console.log(train);
       let t = { ...train };
       delete t.id;
       dailyTrain.value = Object.assign(dailyTrain.value, t);
+    };
+    const onClickGenDaily = () => {
+      genDailyVisible.value = true;
     };
     onMounted(() => {
       handleQuery({
@@ -290,6 +330,10 @@ export default defineComponent({
       onEdit,
       onDelete,
       onChangeCode,
+      genDailyVisible,
+      handleGenDailyOk,
+      genDaily,
+      onClickGenDaily,
     };
   },
 });
