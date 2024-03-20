@@ -118,4 +118,22 @@ public class DailyTrainSeatService {
             dailyTrainSeatMapper.insert(dailyTrainSeat);
         }
     }
+
+    //    计算座位有多少
+
+    /**
+     * @param date      车次时间
+     * @param trainCode 车次编号
+     * @param seatType  座位类型
+     */
+    public int countSeat(Date date, String trainCode, String seatType) {
+        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
+        dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode)
+                .andSeatTypeEqualTo(seatType);
+        long l = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
+        if (l == 0L) {
+            return -1;
+        }
+        return (int) l;
+    }
 }

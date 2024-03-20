@@ -143,6 +143,6 @@ public class DailyTrainService {
         dailyTrainSeatService.genDaily(date, train.getCode());
 
 //        生成余票信息
-        dailyTrainTicketService.genDaily(date, train.getCode());
+        dailyTrainTicketService.genDaily(dailyTrain,date, train.getCode());
     }
 }

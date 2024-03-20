@@ -168,11 +168,11 @@ export default defineComponent({
         dataIndex: "start",
         key: "start",
       },
-      {
-        title: "出发站拼音",
-        dataIndex: "startPinyin",
-        key: "startPinyin",
-      },
+      // {
+      //   title: "出发站拼音",
+      //   dataIndex: "startPinyin",
+      //   key: "startPinyin",
+      // },
       {
         title: "出发时间",
         dataIndex: "startTime",
@@ -188,11 +188,11 @@ export default defineComponent({
         dataIndex: "end",
         key: "end",
       },
-      {
-        title: "到达站拼音",
-        dataIndex: "endPinyin",
-        key: "endPinyin",
-      },
+      // {
+      //   title: "到达站拼音",
+      //   dataIndex: "endPinyin",
+      //   key: "endPinyin",
+      // },
       {
         title: "到站时间",
         dataIndex: "endTime",
