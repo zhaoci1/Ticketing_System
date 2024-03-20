@@ -2,8 +2,15 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="handleQuery()">刷新</a-button>
-        <a-button type="primary" @click="onAdd">新增</a-button>
+        <the-select v-model="param.trainCode"></the-select>
+        <a-date-picker
+          v-model:value="param.date"
+          valueFormat="YYYY-MM-DD"
+          placeholder="请选择日期"
+        ></a-date-picker>
+        <station-select v-model="param.start"></station-select>
+        <station-select v-model="param.end"></station-select>
+        <a-button type="primary" @click="handleQuery()">查询</a-button>
       </a-space>
     </p>
     <a-table
@@ -14,18 +21,54 @@
       :loading="loading"
     >
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'operation'">
-          <a-space>
-            <a-popconfirm
-              title="删除后不可恢复，确认删除?"
-              @confirm="onDelete(record)"
-              ok-text="确认"
-              cancel-text="取消"
-            >
-              <a style="color: red">删除</a>
-            </a-popconfirm>
-            <a @click="onEdit(record)">编辑</a>
-          </a-space>
+        <template v-if="column.dataIndex === 'operation'"> </template>
+        <template v-else-if="column.dataIndex === 'station'">
+          {{ record.start }}<br />
+          {{ record.end }}
+        </template>
+        <template v-else-if="column.dataIndex === 'time'">
+          {{ record.startTime }}<br />
+          {{ record.endTime }}
+        </template>
+        <template v-else-if="column.dataIndex === 'duration'">
+          {{ calDuration(record.startTime, record.endTime) }}<br />
+          <div
+            v-if="
+              record.startTime.replaceAll(':', '') >=
+              record.endTime.replaceAll(':', '')
+            "
+          >
+            次日到达
+          </div>
+          <div v-else>当日到达</div>
+        </template>
+        <template v-else-if="column.dataIndex === 'ydz'">
+          <div v-if="record.ydz >= 0">
+            {{ record.ydz }}<br />
+            {{ record.ydzPrice }}￥
+          </div>
+          <div v-else>--</div>
+        </template>
+        <template v-else-if="column.dataIndex === 'edz'">
+          <div v-if="record.edz >= 0">
+            {{ record.edz }}<br />
+            {{ record.edzPrice }}￥
+          </div>
+          <div v-else>--</div>
+        </template>
+        <template v-else-if="column.dataIndex === 'rw'">
+          <div v-if="record.rw >= 0">
+            {{ record.rw }}<br />
+            {{ record.rwPrice }}￥
+          </div>
+          <div v-else>--</div>
+        </template>
+        <template v-else-if="column.dataIndex === 'yw'">
+          <div v-if="record.yw >= 0">
+            {{ record.yw }}<br />
+            {{ record.ywPrice }}￥
+          </div>
+          <div v-else>--</div>
         </template>
       </template>
     </a-table>
@@ -114,10 +157,14 @@
 
 <script>
 import Axios from "@/api/dailyTrainTicketApi";
+import StationSelect from "@/components/station-select.vue";
+import theSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted } from "vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
+  components: { theSelect, StationSelect },
   name: "daily-train-ticket-view",
   setup() {
     const visible = ref(false);
@@ -164,44 +211,16 @@ export default defineComponent({
         key: "trainCode",
       },
       {
-        title: "出发站",
-        dataIndex: "start",
-        key: "start",
-      },
-      // {
-      //   title: "出发站拼音",
-      //   dataIndex: "startPinyin",
-      //   key: "startPinyin",
-      // },
-      {
-        title: "出发时间",
-        dataIndex: "startTime",
-        key: "startTime",
+        title: "车站",
+        dataIndex: "station",
       },
       {
-        title: "出发站序",
-        dataIndex: "startIndex",
-        key: "startIndex",
+        title: "时间",
+        dataIndex: "time",
       },
       {
-        title: "到达站",
-        dataIndex: "end",
-        key: "end",
-      },
-      // {
-      //   title: "到达站拼音",
-      //   dataIndex: "endPinyin",
-      //   key: "endPinyin",
-      // },
-      {
-        title: "到站时间",
-        dataIndex: "endTime",
-        key: "endTime",
-      },
-      {
-        title: "到站站序",
-        dataIndex: "endIndex",
-        key: "endIndex",
+        title: "历时",
+        dataIndex: "duration",
       },
       {
         title: "一等座余票",
@@ -209,45 +228,22 @@ export default defineComponent({
         key: "ydz",
       },
       {
-        title: "一等座票价",
-        dataIndex: "ydzPrice",
-        key: "ydzPrice",
-      },
-      {
         title: "二等座余票",
         dataIndex: "edz",
         key: "edz",
       },
       {
-        title: "二等座票价",
-        dataIndex: "edzPrice",
-        key: "edzPrice",
-      },
-      {
-        title: "软卧余票",
+        title: "软卧",
         dataIndex: "rw",
         key: "rw",
       },
       {
-        title: "软卧票价",
-        dataIndex: "rwPrice",
-        key: "rwPrice",
-      },
-      {
-        title: "硬卧余票",
+        title: "硬卧",
         dataIndex: "yw",
         key: "yw",
       },
-      {
-        title: "硬卧票价",
-        dataIndex: "ywPrice",
-        key: "ywPrice",
-      },
     ];
-    const onAdd = () => {
-      dailyTrainTicket.value = {};
-      visible.value = true;
-    };
+    let param = ref({});
     const onEdit = (record) => {
       dailyTrainTicket.value = { ...record };
       visible.value = true;
@@ -264,6 +260,13 @@ export default defineComponent({
           message.success("删除失败");
         }
       });
+    };
+    const calDuration = (startTime,endTime) => {
+      let diff = dayjs(endTime, "HH:mm:ss").diff(
+        dayjs(startTime, "HH:mm:ss"),
+        "seconds"
+      );
+      return dayjs("00:00:00", "HH:mm:ss").second(diff).format("HH:mm:ss");
     };
     const handleOk = (e) => {
       Axios.save(dailyTrainTicket.value).then((res) => {
@@ -297,6 +300,10 @@ export default defineComponent({
         };
       }
       loading.value = true;
+      page.trainCode = param.value.trainCode;
+      page.date = param.value.date;
+      page.start = param.value.start;
+      page.end = param.value.end;
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -324,10 +331,11 @@ export default defineComponent({
       handleQuery,
       pagination,
       loading,
-      onAdd,
       handleOk,
       onEdit,
       onDelete,
+      param,
+      calDuration,
     };
   },
 });

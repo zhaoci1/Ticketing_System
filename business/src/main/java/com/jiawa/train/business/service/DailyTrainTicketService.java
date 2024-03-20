@@ -71,6 +71,19 @@ public class DailyTrainTicketService {
         dailyTrainTicketExample.setOrderByClause("id desc");
         DailyTrainTicketExample.Criteria criteria = dailyTrainTicketExample.createCriteria();
 
+        if (ObjectUtil.isNotNull(req.getDate())) {
+            criteria.andDateEqualTo(req.getDate());
+        }
+        if (ObjectUtil.isNotNull(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
+        if (ObjectUtil.isNotNull(req.getStart())) {
+            criteria.andStartEqualTo(req.getStart());
+        }
+        if (ObjectUtil.isNotNull(req.getEnd())) {
+            criteria.andEndEqualTo(req.getEnd());
+        }
+
 //        类似于limit(1,2);
         PageHelper.startPage(req.getPage(), req.getSize());
 //        这条语句执行时，会将上面一行的语句条件加入进去
