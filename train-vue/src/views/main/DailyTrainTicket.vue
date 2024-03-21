@@ -2,7 +2,6 @@
   <div>
     <p>
       <a-space>
-        <the-select v-model="param.trainCode"></the-select>
         <a-date-picker
           v-model:value="param.date"
           valueFormat="YYYY-MM-DD"
@@ -69,6 +68,9 @@
             {{ record.ywPrice }}￥
           </div>
           <div v-else>--</div>
+        </template>
+        <template v-else-if="column.dataIndex === 'operate'">
+          <a-button type="primary" @click="scheduled(record)">预定</a-button>
         </template>
       </template>
     </a-table>
@@ -158,13 +160,13 @@
 <script>
 import Axios from "@/api/dailyTrainTicketApi";
 import StationSelect from "@/components/station-select.vue";
-import theSelect from "@/components/the-select.vue";
 import { message } from "ant-design-vue";
 import { defineComponent, ref, onMounted } from "vue";
 import dayjs from "dayjs";
+import router from "@/router";
 
 export default defineComponent({
-  components: { theSelect, StationSelect },
+  components: { StationSelect },
   name: "ticket-view",
   setup() {
     const visible = ref(false);
@@ -200,11 +202,6 @@ export default defineComponent({
     const dailyTrainTickets = ref([]);
 
     const columns = [
-      {
-        title: "日期",
-        dataIndex: "date",
-        key: "date",
-      },
       {
         title: "车次编号",
         dataIndex: "trainCode",
@@ -242,6 +239,11 @@ export default defineComponent({
         dataIndex: "yw",
         key: "yw",
       },
+      {
+        title: "操作",
+        dataIndex: "operate",
+        key: "operate",
+      },
     ];
     let param = ref({});
     const onEdit = (record) => {
@@ -261,12 +263,17 @@ export default defineComponent({
         }
       });
     };
-    const calDuration = (startTime,endTime) => {
+    const calDuration = (startTime, endTime) => {
       let diff = dayjs(endTime, "HH:mm:ss").diff(
         dayjs(startTime, "HH:mm:ss"),
         "seconds"
       );
       return dayjs("00:00:00", "HH:mm:ss").second(diff).format("HH:mm:ss");
+    };
+    const scheduled = (order) => {
+      dailyTrainTicket.value = { ...order };
+      SessionStorage.set("dailyTrainTicket", dailyTrainTicket.value);
+      router.push("/order");
     };
     const handleOk = (e) => {
       Axios.save(dailyTrainTicket.value).then((res) => {
@@ -299,11 +306,13 @@ export default defineComponent({
           size: pagination.value.pageSize,
         };
       }
+      console.log(param.value);
       loading.value = true;
       page.trainCode = param.value.trainCode;
       page.date = param.value.date;
       page.start = param.value.start;
       page.end = param.value.end;
+      SessionStorage.set("ticketParams", param.value);
       Axios.pageList(page).then((res) => {
         loading.value = false;
         if (res.code == 200) {
@@ -316,6 +325,7 @@ export default defineComponent({
       });
     };
     onMounted(() => {
+      param.value = SessionStorage.get("ticketParams") || {};
       handleQuery({
         page: pagination.value.current,
         size: pagination.value.pageSize,
@@ -336,6 +346,7 @@ export default defineComponent({
       onDelete,
       param,
       calDuration,
+      scheduled,
     };
   },
 });
