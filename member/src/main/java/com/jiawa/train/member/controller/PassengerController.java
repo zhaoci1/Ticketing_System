@@ -18,7 +18,6 @@ public class PassengerController {
 
     @PostMapping("/save")
     public AxiosResult save(@Valid @RequestBody PassengerReq req) {
-        System.out.println(req);
         int save = passengerService.save(req);
         return AxiosResult.success(save >= 1);
     }
@@ -31,7 +30,15 @@ public class PassengerController {
 
     @DeleteMapping("/delete/{id}")
     public AxiosResult deletePassenger(@PathVariable Long id) {
-
         return AxiosResult.success(passengerService.delete(id)>=1);
+    }
+
+    /**
+     * 获取当前用户所拥有的乘客
+     * @return
+     */
+    @GetMapping("/query-mine")
+    public AxiosResult queryMine() {
+        return AxiosResult.success(passengerService.queryMine());
     }
 }

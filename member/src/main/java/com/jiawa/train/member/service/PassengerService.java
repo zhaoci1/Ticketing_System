@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.common.context.LoginMemberContext;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.member.domain.Passenger;
@@ -38,6 +39,7 @@ public class PassengerService {
         if (ObjectUtil.isNull(passenger.getId())) {
             //        获取当前登录的会员id
             passenger.setId(SnowUtil.getSnowflakeNextId());
+            passenger.setMemberId(LoginMemberContext.getId());
             passenger.setCreateTime(now);
             passenger.setUpdateTime(now);
             state = passengerMapper.insert(passenger);
@@ -54,11 +56,16 @@ public class PassengerService {
         passengerExample.setOrderByClause("id desc");
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
 
+        if (ObjectUtil.isNotNull(req.getMemberId())) {
+            criteria.andMemberIdEqualTo(req.getMemberId());
+        }
+
 //        类似于limit(1,2);
         PageHelper.startPage(req.getPage(), req.getSize());
 //        这条语句执行时，会将上面一行的语句条件加入进去
         List<Passenger> passengers = passengerMapper.selectByExample(passengerExample);
         PageInfo<Passenger> pageInfo = new PageInfo<>(passengers);
+
         PageResp pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(pageInfo.getList());
@@ -68,5 +75,14 @@ public class PassengerService {
 
     public int delete(Long id) {
         return passengerMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<PassengerQueryResp> queryMine() {
+        PassengerExample passengerExample = new PassengerExample();
+        passengerExample.setOrderByClause("name desc");
+        PassengerExample.Criteria criteria = passengerExample.createCriteria();
+        criteria.andMemberIdEqualTo(LoginMemberContext.getId());
+        List<Passenger> passengers = passengerMapper.selectByExample(passengerExample);
+        return BeanUtil.copyToList(passengers, PassengerQueryResp.class);
     }
 }

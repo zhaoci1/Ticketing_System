@@ -2,6 +2,7 @@ import myAxios from "@/utils/request";
 
 let Axios = {
   save(passenger) {
+    console.log(passenger);
     return myAxios.post("member/passenger/save", passenger);
   },
   pageList(page) {
@@ -13,7 +14,10 @@ let Axios = {
     });
   },
   delete(id) {
-    return myAxios.delete("member/passenger/delete/"+id);
+    return myAxios.delete("member/passenger/delete/" + id);
+  },
+  queryMine() {
+    return myAxios.get("member/passenger/query-mine");
   },
 };
 
