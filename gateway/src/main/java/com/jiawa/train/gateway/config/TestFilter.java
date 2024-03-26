@@ -15,7 +15,6 @@ public class TestFilter implements GlobalFilter, Ordered {
     private static final Logger Log = LoggerFactory.getLogger(TestFilter.class);
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println(1);
         Log.info("TestFilter");
         return chain.filter(exchange);
     }
