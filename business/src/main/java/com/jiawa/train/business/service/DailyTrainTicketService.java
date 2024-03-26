@@ -183,4 +183,20 @@ public class DailyTrainTicketService {
             }
         }
     }
+
+    public DailyTrainTicket selectByUnique(String trainCode, String end, Date date, String start) {
+        DailyTrainTicketExample trainStationExample = new DailyTrainTicketExample();
+        trainStationExample.createCriteria().
+                andTrainCodeEqualTo(trainCode)
+                .andDateEqualTo(date)
+                .andStartEqualTo(start)
+                .andEndEqualTo(end);
+        List<DailyTrainTicket> list = dailyTrainTicketMapper.selectByExample(trainStationExample);
+        if (CollUtil.isNotEmpty(list)) {
+//                进入条件则说明重复了，需要抛异常
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
 }

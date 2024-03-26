@@ -204,7 +204,6 @@ export default defineComponent({
     const handleOk = () => {
       // 设置每张票的座位,先清空座位
       for (let i = 0; i < passengerChecks.value.length; i++) {
-        console.log(1);
         passengerChecks.value[i].seat = null;
       }
       let i = -1;
@@ -222,11 +221,17 @@ export default defineComponent({
         message.error("选座数小于购票数");
         return;
       }
-      console.log(passengerChecks.value);
+      Axios.doConfirm({
+        dailyTrainTicketId: dailyTrainTicket.id,
+        date: dailyTrainTicket.date,
+        trainCode: dailyTrainTicket.trainCode,
+        start: dailyTrainTicket.start,
+        end: dailyTrainTicket.end,
+        tickets: passengerChecks.value,
+      });
     };
     const finishCheckPassenger = () => {
       let seatTypesTemp = JSON.parse(JSON.stringify(seatTypes));
-      console.log(seatTypesTemp);
       for (let i = 0; i < passengerChecks.value.length; i++) {
         let ticket = passengerChecks.value[i];
         for (let j = 0; j < seatTypesTemp.length; j++) {
@@ -285,7 +290,6 @@ export default defineComponent({
     watch(
       () => passengerChecks.value,
       (newVal, oldVal) => {
-        console.log("乘客发生变化");
         // 每次有变化时，把购票列表情况，然后重新构造列表
         tickets.value = [];
         passengerChecks.value.forEach((item) =>

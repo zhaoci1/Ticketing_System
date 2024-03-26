@@ -18,7 +18,7 @@ public class ServerGenerator {
     //    vue界面的路径
     static String vuePath = "admin/src/views/main/";
     //    表示生成的界面是不是只读的界面，如果为false的话，会生成增删改查，如果为true，则只生成查
-    static boolean readOnly = false;
+    static boolean readOnly = true;
 
     static String module = "";
 

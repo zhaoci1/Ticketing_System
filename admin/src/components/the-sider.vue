@@ -46,6 +46,11 @@
             <user-outlined /> &nbsp; 每日座位
           </router-link>
         </a-menu-item>
+        <a-menu-item key="/business/confirm_order">
+          <router-link to="/business/confirm_order">
+            <user-outlined /> &nbsp; 订单信息
+          </router-link>
+        </a-menu-item>
         
       </a-sub-menu>
 
