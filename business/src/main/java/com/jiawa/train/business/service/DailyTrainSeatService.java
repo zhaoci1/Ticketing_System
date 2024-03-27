@@ -96,7 +96,7 @@ public class DailyTrainSeatService {
 //        获取车次的车站信息
         List<TrainStation> trainStations = trainStationService.selectByTrainCode(trainCode);
 //        获取车站个数
-        String sell = StrUtil.fillBefore("", '0', trainStations.size());
+        String sell = StrUtil.fillBefore("", '0', trainStations.size()-1);
 
 //        查出某车次的所有的车厢信息信息
         List<TrainSeat> trainSeats = trainSeatService.selectByTrainCode(trainCode);
@@ -128,6 +128,7 @@ public class DailyTrainSeatService {
      */
     public int countSeat(Date date, String trainCode, String seatType) {
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
+        dailyTrainSeatExample.setOrderByClause("carriage_seat_index asc");
         dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode)
                 .andSeatTypeEqualTo(seatType);
         long l = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
