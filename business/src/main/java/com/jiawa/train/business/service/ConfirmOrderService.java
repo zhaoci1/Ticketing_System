@@ -4,11 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.log.Log;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.DailyTrainTicket;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
+import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.enums.SeatTypeEnum;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
 import com.jiawa.train.common.context.LoginMemberContext;
@@ -23,8 +26,11 @@ import com.jiawa.train.business.req.ConfirmOrderQuery;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;
 import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +42,8 @@ public class ConfirmOrderService {
 
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+
+    private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
     /**
      * 新增乘车人
@@ -98,6 +106,7 @@ public class ConfirmOrderService {
         String trainCode = req.getTrainCode();
         String start = req.getStart();
         String end = req.getEnd();
+        List<ConfirmOrderTicketReq> tickets = req.getTickets();
 
         ConfirmOrder confirmOrder = new ConfirmOrder();
         confirmOrder.setId(SnowUtil.getSnowflakeNextId());
@@ -110,7 +119,7 @@ public class ConfirmOrderService {
         confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
         confirmOrder.setCreateTime(now);
         confirmOrder.setUpdateTime(now);
-        confirmOrder.setTickets(JSON.toJSONString(req.getTickets()));
+        confirmOrder.setTickets(JSON.toJSONString(tickets));
         confirmOrderMapper.insert(confirmOrder);
 
 
@@ -118,10 +127,48 @@ public class ConfirmOrderService {
         DailyTrainTicket dailyTrainTicket =
                 dailyTrainTicketService.selectByUnique(trainCode, end, date, start);
 
-//        System.out.println();
-
 //        预扣减余票数量,并判断余票是否足够
         reduceickets(req, dailyTrainTicket);
+
+
+//        计算座位的偏移值
+        ConfirmOrderTicketReq ticketReq0 = tickets.get(0);
+        if (StrUtil.isNotBlank(ticketReq0.getSeat())) {
+            Log.info("本次购票有选座");
+//            先查出本次选座的座位有哪些列,用于计算所选座位和第一个座位的偏移值
+            List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(ticketReq0.getSeatTypeCode());
+            Log.info("本次选座的座位类型,包含的列:{}", colEnumList);
+//            组成和前端两排选座一样的列表
+            List<String> referSeatList = new ArrayList<>();
+
+            for (int i = 1; i <= 2; i++) {
+                for (SeatColEnum seatColEnum : colEnumList) {
+                    referSeatList.add(seatColEnum.getCode() + i);
+                }
+            }
+            Log.info("用于做参照的两排座位：{}", referSeatList);
+//            计算偏移值
+//            先计算全部都绝对偏移值,也就是座位的索引值
+//            然后把它们都减去第一个座位的索引值,得出来就是相对的偏移值了
+            ArrayList<Integer> offsetList = new ArrayList<>();
+            List<Integer> indexList = new ArrayList<>();
+//            获取索引
+            for (ConfirmOrderTicketReq ticket : tickets) {
+                int index = referSeatList.indexOf(ticket.getSeat());
+                indexList.add(index);
+            }
+            Log.info("计算得到所有座位的绝对偏移值:{}", indexList);
+//            获取相对偏移值
+            for (Integer i : indexList) {
+                int offset = i - indexList.get(0);
+                offsetList.add(offset);
+            }
+            Log.info("计算得到所有座位的相对偏移值:{}", offsetList);
+
+        } else {
+            Log.info("本次购票没有选座");
+        }
+
     }
 
     private static void reduceickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {

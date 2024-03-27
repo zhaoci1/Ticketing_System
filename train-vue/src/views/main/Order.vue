@@ -229,9 +229,9 @@ export default defineComponent({
           passengerId: item.id,
           passengerName: item.name,
           passengerIdCard: item.idCard,
-          passengerType: item.passengerType,
+          passengerType: item.seatTypeCode,
           seat: item.seat,
-          seatTypeCode: item.seatTypeCode,
+          seatTypeCode: item.passengerType,
         });
       });
       Axios.doConfirm({
