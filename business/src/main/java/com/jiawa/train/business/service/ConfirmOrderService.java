@@ -9,7 +9,7 @@ import cn.hutool.log.Log;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.DailyTrainTicket;
+import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.enums.SeatTypeEnum;
@@ -19,8 +19,6 @@ import com.jiawa.train.common.exception.BusinessException;
 import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
-import com.jiawa.train.business.domain.ConfirmOrder;
-import com.jiawa.train.business.domain.ConfirmOrderExample;
 import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.business.req.ConfirmOrderQuery;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;
@@ -42,6 +40,12 @@ public class ConfirmOrderService {
 
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
+
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
 
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
@@ -165,12 +169,42 @@ public class ConfirmOrderService {
             }
             Log.info("计算得到所有座位的相对偏移值:{}", offsetList);
 
+            getSaat(req.getDate(), req.getTrainCode(),
+                    ticketReq0.getSeatTypeCode(),
+                    ticketReq0.getSeat().split("")[0],
+                    offsetList);
         } else {
             Log.info("本次购票没有选座");
+            for (ConfirmOrderTicketReq ticket : tickets) {
+                System.out.println(ticket);
+                getSaat(date, trainCode, ticket.getSeatTypeCode(), null, null);
+            }
         }
-
+//        选座
+//                根据车厢获取座位
     }
 
+    private void getSaat(Date date, String trainCode,
+                         String seatType, String column, List<Integer> indexList) {
+        List<DailyTrainCarriage> carriageList =
+                dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
+
+        Log.info("共查出{}个符合条件的车厢", carriageList.size());
+//        对车厢进行遍历
+        for (DailyTrainCarriage dailyTrainCarriage : carriageList) {
+            Log.info("开始从车厢{}选座", dailyTrainCarriage.getIndex());
+            List<DailyTrainSeat> seatList = dailyTrainSeatService
+                    .selectByCarriage(date, trainCode, dailyTrainCarriage.getIndex());
+            Log.info("车厢{}的座位数{}", dailyTrainCarriage.getIndex(),seatList.size());
+        }
+    }
+
+    /**
+     * 根据条件去判断余票是否足够
+     *
+     * @param req
+     * @param dailyTrainTicket
+     */
     private static void reduceickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
         for (ConfirmOrderTicketReq ticketReq : req.getTickets()) {
             String seatTypeCode = ticketReq.getSeatTypeCode();

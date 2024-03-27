@@ -136,4 +136,20 @@ public class DailyTrainSeatService {
         }
         return (int) l;
     }
+
+    /**
+     * 根据条件获取座位
+     * @param date
+     * @param trainCode
+     * @param carriageIndex
+     * @return
+     */
+    public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode,Integer carriageIndex){
+        DailyTrainSeatExample example = new DailyTrainSeatExample();
+        example.createCriteria()
+                .andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode)
+                .andCarriageIndexEqualTo(carriageIndex);
+        return dailyTrainSeatMapper.selectByExample(example);
+    }
 }
