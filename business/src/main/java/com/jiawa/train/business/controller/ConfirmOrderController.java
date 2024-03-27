@@ -1,5 +1,6 @@
 package com.jiawa.train.business.controller;
 
+import com.jiawa.train.business.req.ConfirmOrderTicketReq;
 import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.business.req.ConfirmOrderQuery;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;

@@ -26,8 +26,8 @@
     <br />
     <a-table :dataSource="passengerChecks" :columns="columns">
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'passengerCode'">
-          <a-select v-model:value="record.passengerCode">
+        <template v-if="column.dataIndex === 'seatTypeCode'">
+          <a-select v-model:value="record.seatTypeCode">
             <a-select-option
               v-for="item in PASSENGER_TYPE_ARRAY"
               :key="item.code"
@@ -164,8 +164,8 @@ export default defineComponent({
       },
       {
         title: "票种",
-        dataIndex: "passengerCode",
-        key: "passengerCode",
+        dataIndex: "seatTypeCode",
+        key: "seatTypeCode",
       },
       {
         title: "座位类型",
@@ -221,13 +221,32 @@ export default defineComponent({
         message.error("选座数小于购票数");
         return;
       }
+      console.log("passengerChecks", passengerChecks.value);
+      console.log("tickets", tickets.value);
+      let ticketList = [];
+      passengerChecks.value.forEach((item) => {
+        ticketList.push({
+          passengerId: item.id,
+          passengerName: item.name,
+          passengerIdCard: item.idCard,
+          passengerType: item.passengerType,
+          seat: item.seat,
+          seatTypeCode: item.seatTypeCode,
+        });
+      });
       Axios.doConfirm({
         dailyTrainTicketId: dailyTrainTicket.id,
         date: dailyTrainTicket.date,
         trainCode: dailyTrainTicket.trainCode,
         start: dailyTrainTicket.start,
         end: dailyTrainTicket.end,
-        tickets: passengerChecks.value,
+        tickets: ticketList,
+      }).then(res=>{
+        if(res.code!=200){
+          message.error(res.message)
+        }else{
+          message.success(res.message)
+        }
       });
     };
     const finishCheckPassenger = () => {
@@ -297,14 +316,13 @@ export default defineComponent({
             passengerId: item.id,
             passengerType: item.type,
             // 默认选中一等座
-            passengerCode: seatTypes[0].code,
+            seatTypeCode: seatTypes[0].code,
             passengerName: item.name,
             passengerIdCard: item.idCard,
           })
         );
         for (let i = 0; i < tickets.value.length; i++) {
-          passengerChecks.value[i].passengerCode =
-            tickets.value[i].passengerCode;
+          passengerChecks.value[i].seatTypeCode = tickets.value[i].seatTypeCode;
 
           passengerChecks.value[i].passengerType =
             tickets.value[i].passengerType;

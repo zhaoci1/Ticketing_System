@@ -20,7 +20,6 @@ let Axios = {
     return myAxios.get("member/passenger/query-mine");
   },
   doConfirm(data) {
-    console.log(data);
     return myAxios.post("business/confirm-order/do", data);
   },
 };
