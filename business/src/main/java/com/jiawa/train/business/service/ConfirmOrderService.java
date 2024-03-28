@@ -49,6 +49,9 @@ public class ConfirmOrderService {
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
 
+    @Resource
+    private AfterConfirmOrderService afterConfirmOrderService;
+
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
     /**
@@ -194,6 +197,9 @@ public class ConfirmOrderService {
             }
         }
         Log.info("最终选座:{}", finalSeatList);
+
+//        选座后的事务处理
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList);
     }
 
     /**
@@ -238,7 +244,7 @@ public class ConfirmOrderService {
                     }
                 }
 
-                if(alreadyChooseFlag){
+                if (alreadyChooseFlag) {
                     Log.info("座位{}被选中过,不能重复选择,将判断下一个座位", seatIndex);
                     continue;
                 }
