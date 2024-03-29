@@ -13,7 +13,7 @@ public class TestController {
 
     @GetMapping("/hello")
     public String hello() {
-        System.out.println(businessFeign.test());;
+        System.out.println(businessFeign.queryList());;
         return "ok";
     }
 }
