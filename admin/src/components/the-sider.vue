@@ -3,7 +3,7 @@
     <a-menu
       v-model:selectedKeys="selectedKeys"
       mode="inline"
-      :openKeys="['batch', 'base', 'business']"
+      :openKeys="['batch', 'base', 'business','member']"
       :style="{ height: '100%', borderRight: 0 }"
     >
       <a-menu-item key="/welcome">
@@ -18,9 +18,26 @@
         <template #title>
           <span>
             <UnorderedListOutlined />
+            会员管理
+          </span>
+        </template>
+        <a-menu-item key="/member/ticket">
+          <router-link to="/member/ticket">
+            <user-outlined /> &nbsp; 会员车票
+          </router-link>
+        </a-menu-item>
+       
+        
+      </a-sub-menu>
+      
+      <a-sub-menu key="business">
+        <template #title>
+          <span>
+            <UnorderedListOutlined />
             业务管理
           </span>
         </template>
+        
         <a-menu-item key="/business/daily-train_ticket">
           <router-link to="/business/daily-train_ticket">
             <user-outlined /> &nbsp; 余票信息

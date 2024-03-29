@@ -199,7 +199,7 @@ public class ConfirmOrderService {
         Log.info("最终选座:{}", finalSeatList);
 
 //        选座后的事务处理
-        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList);
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList,tickets);
     }
 
     /**

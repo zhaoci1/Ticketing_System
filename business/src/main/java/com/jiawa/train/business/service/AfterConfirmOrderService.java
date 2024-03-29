@@ -2,8 +2,13 @@ package com.jiawa.train.business.service;
 
 import com.jiawa.train.business.domain.DailyTrainSeat;
 import com.jiawa.train.business.domain.DailyTrainTicket;
+import com.jiawa.train.business.feign.MemberFeign;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.mapper.cust.DailyTrainTicketCustMapper;
+import com.jiawa.train.business.req.ConfirmOrderTicketReq;
+import com.jiawa.train.common.context.LoginMemberContext;
+import com.jiawa.train.common.req.TicketReq;
+import com.jiawa.train.common.resp.AxiosResult;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +27,9 @@ public class AfterConfirmOrderService {
     @Resource
     private DailyTrainTicketCustMapper dailyTrainTicketCustMapper;
 
+    @Resource
+    private MemberFeign memberFeign;
+
     private static final Logger Log = LoggerFactory.getLogger(AfterConfirmOrderService.class);
 
     /**
@@ -30,10 +38,16 @@ public class AfterConfirmOrderService {
      * @param finalSeatList 选好的座位列表
      */
     @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList) {
+    public void afterDoConfirm(
+            DailyTrainTicket dailyTrainTicket,
+            List<DailyTrainSeat> finalSeatList,
+            List<ConfirmOrderTicketReq> tickets
+    ) {
         System.out.println(dailyTrainTicket);
-        for (DailyTrainSeat dailyTrainSeat : finalSeatList) {
+        for (int j = 0; j < finalSeatList.size(); j++) {
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
+            DailyTrainSeat dailyTrainSeat = finalSeatList.get(j);
+
             seatForUpdate.setId(dailyTrainSeat.getId());
             seatForUpdate.setSell(dailyTrainSeat.getSell());
             seatForUpdate.setUpdateTime(new Date());
@@ -62,7 +76,6 @@ public class AfterConfirmOrderService {
             for (int i = endIndex; i < seatForUpdate.getSell().length(); i++) {
                 char aChar = charArray[i];
                 if (aChar == '1') {
-                    System.out.println(charArray);
                     maxEndIndex = i;
                     break;
                 }
@@ -79,6 +92,22 @@ public class AfterConfirmOrderService {
                     minEndIndex,
                     maxEndIndex
             );
+            TicketReq memberTicketReq = new TicketReq();
+            memberTicketReq.setMemberId(LoginMemberContext.getId());
+            memberTicketReq.setPassengerId(tickets.get(j).getPassengerId());
+            memberTicketReq.setPassengerName(tickets.get(j).getPassengerName());
+            memberTicketReq.setTrainDate(dailyTrainTicket.getDate());
+            memberTicketReq.setTrainCode(dailyTrainTicket.getTrainCode());
+            memberTicketReq.setCarriageIndex(dailyTrainSeat.getCarriageIndex());
+            memberTicketReq.setSeatRow(dailyTrainSeat.getRow());
+            memberTicketReq.setSeatCol(dailyTrainSeat.getCol());
+            memberTicketReq.setStartStation(dailyTrainTicket.getStart());
+            memberTicketReq.setStartTime(dailyTrainTicket.getStartTime());
+            memberTicketReq.setEndStation(dailyTrainTicket.getEnd());
+            memberTicketReq.setEndTime(dailyTrainTicket.getEndTime());
+            memberTicketReq.setSeatType(dailyTrainSeat.getSeatType());
+            AxiosResult<Object> commonResp = memberFeign.save(memberTicketReq);
+            Log.info("调用member接口，返回：{}", commonResp);
         }
     }
 }
