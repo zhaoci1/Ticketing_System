@@ -1,8 +1,11 @@
 package com.jiawa.train.business.service;
 
+import com.jiawa.train.business.domain.ConfirmOrder;
 import com.jiawa.train.business.domain.DailyTrainSeat;
 import com.jiawa.train.business.domain.DailyTrainTicket;
+import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.feign.MemberFeign;
+import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.mapper.cust.DailyTrainTicketCustMapper;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
@@ -28,6 +31,9 @@ public class AfterConfirmOrderService {
     private DailyTrainTicketCustMapper dailyTrainTicketCustMapper;
 
     @Resource
+    private ConfirmOrderMapper confirmOrderMapper;
+
+    @Resource
     private MemberFeign memberFeign;
 
     private static final Logger Log = LoggerFactory.getLogger(AfterConfirmOrderService.class);
@@ -41,7 +47,8 @@ public class AfterConfirmOrderService {
     public void afterDoConfirm(
             DailyTrainTicket dailyTrainTicket,
             List<DailyTrainSeat> finalSeatList,
-            List<ConfirmOrderTicketReq> tickets
+            List<ConfirmOrderTicketReq> tickets,
+            ConfirmOrder confirmOrder
     ) {
         System.out.println(dailyTrainTicket);
         for (int j = 0; j < finalSeatList.size(); j++) {
@@ -108,6 +115,13 @@ public class AfterConfirmOrderService {
             memberTicketReq.setSeatType(dailyTrainSeat.getSeatType());
             AxiosResult<Object> commonResp = memberFeign.save(memberTicketReq);
             Log.info("调用member接口，返回：{}", commonResp);
+
+
+            ConfirmOrder confirmOrderUpdate = new ConfirmOrder();
+            confirmOrderUpdate.setId(confirmOrder.getId());
+            confirmOrderUpdate.setUpdateTime(new Date());
+            confirmOrderUpdate.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
+            confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderUpdate);
         }
     }
 }

@@ -14,9 +14,11 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'"> </template>
-        <template v-else-if="column.dataIndex === 'type'">
+        <template v-else-if="column.dataIndex === 'status'">
           <span v-for="item in CONFIRM_ORDER_STATUS_ARRAY" :key="item.code">
-            <span v-if="item.code === record.status"> {{ item.desc }}</span>
+            <span v-if="item.code === record.status">
+              {{ item.desc }}
+            </span>
           </span>
         </template>
       </template>
