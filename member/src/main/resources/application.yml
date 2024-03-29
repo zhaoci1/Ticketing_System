@@ -17,3 +17,5 @@ logging:
         train:
           member:
             mapper: trace
+test:
+  nacos: Hello
