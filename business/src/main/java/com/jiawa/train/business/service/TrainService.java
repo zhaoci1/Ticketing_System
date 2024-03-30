@@ -21,6 +21,7 @@ import com.jiawa.train.business.resp.TrainQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -87,6 +88,7 @@ public class TrainService {
         return trainMapper.deleteByPrimaryKey(id);
     }
 
+    @Cacheable("TrainService.queryAll")
     public List<TrainQueryResp> queryAll() {
         List<Train> trains = selectAll();
 //        将train转为特定的返回类

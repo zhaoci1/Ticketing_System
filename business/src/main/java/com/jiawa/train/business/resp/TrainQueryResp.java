@@ -155,6 +155,8 @@ public class TrainQueryResp {
         this.updateTime = updateTime;
     }
 
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
