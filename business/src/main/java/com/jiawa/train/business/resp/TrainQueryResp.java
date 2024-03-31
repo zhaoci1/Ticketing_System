@@ -2,10 +2,12 @@ package com.jiawa.train.business.resp;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import java.io.Serializable;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class TrainQueryResp {
+public class TrainQueryResp implements Serializable {
 
     /**
      * id

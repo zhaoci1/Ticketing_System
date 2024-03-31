@@ -14,6 +14,14 @@ spring:
     port: 6379
     host: localhost
     password: 202019Cs
+  cache:
+    type: redis #设置缓存为redis
+    redis:
+      use-key-prefix: true   # 放在redis里面key的前缀
+      key-prefix: train_cache_ # 设置前缀，进行项目隔离
+      cache-null-values: true # 是否可以为空
+      time-to-live: 60s # 缓存的时间
+
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
 #  configuration:
