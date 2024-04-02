@@ -3,7 +3,6 @@
     <p>
       <a-space>
         <a-button type="primary" @click="handleQuery()">刷新</a-button>
-        <a-button type="primary" @click="onAdd">新增</a-button>
       </a-space>
     </p>
     <a-table
@@ -16,15 +15,7 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <a-space>
-            <a-popconfirm
-              title="删除后不可恢复，确认删除?"
-              @confirm="onDelete(record)"
-              ok-text="确认"
-              cancel-text="取消"
-            >
-              <a style="color: red">删除</a>
-            </a-popconfirm>
-            <a @click="onEdit(record)">编辑</a>
+            <a @click="onEdit(record)">修改令牌余量</a>
           </a-space>
         </template>
       </template>
@@ -46,10 +37,11 @@
             v-model:value="skToken.date"
             valueFormat="YYYY-MM-DD"
             placeholder="请选择日期"
+            disabled
           />
         </a-form-item>
         <a-form-item label="车次编号">
-          <a-input v-model:value="skToken.trainCode" />
+          <a-input v-model:value="skToken.trainCode" disabled />
         </a-form-item>
         <a-form-item label="令牌余量">
           <a-input v-model:value="skToken.count" />
@@ -105,10 +97,6 @@ export default defineComponent({
         dataIndex: "operation",
       },
     ];
-    const onAdd = () => {
-      skToken.value = {};
-      visible.value = true;
-    };
     const onEdit = (record) => {
       skToken.value = { ...record };
       visible.value = true;
@@ -185,7 +173,6 @@ export default defineComponent({
       handleQuery,
       pagination,
       loading,
-      onAdd,
       handleOk,
       onEdit,
       onDelete,

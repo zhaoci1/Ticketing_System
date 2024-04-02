@@ -20,6 +20,8 @@ import com.jiawa.train.business.req.StationQuery;
 import com.jiawa.train.business.req.StationReq;
 import com.jiawa.train.business.resp.StationQueryResp;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,9 @@ public class StationService {
 
     @Resource
     private StationMapper stationMapper;
+
+    private static final Logger Log = LoggerFactory.getLogger(StationService.class);
+
 
     /**
      * 新增乘车人

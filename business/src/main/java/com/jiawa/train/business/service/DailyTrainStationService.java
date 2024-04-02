@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
@@ -114,5 +115,13 @@ public class DailyTrainStationService {
             dailyTrainStation.setDate(date);
             dailyTrainStationMapper.insert(dailyTrainStation);
         }
+    }
+
+
+    public long countByTrainCode(Date date, String trainCode) {
+        DailyTrainStationExample example = new DailyTrainStationExample();
+        example.createCriteria().andTrainCodeEqualTo(trainCode)
+                .andDateEqualTo(date);
+        return dailyTrainStationMapper.countByExample(example);
     }
 }

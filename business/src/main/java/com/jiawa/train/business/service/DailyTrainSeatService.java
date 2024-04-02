@@ -96,7 +96,7 @@ public class DailyTrainSeatService {
 //        获取车次的车站信息
         List<TrainStation> trainStations = trainStationService.selectByTrainCode(trainCode);
 //        获取车站个数
-        String sell = StrUtil.fillBefore("", '0', trainStations.size()-1);
+        String sell = StrUtil.fillBefore("", '0', trainStations.size() - 1);
 
 //        查出某车次的所有的车厢信息信息
         List<TrainSeat> trainSeats = trainSeatService.selectByTrainCode(trainCode);
@@ -119,6 +119,10 @@ public class DailyTrainSeatService {
         }
     }
 
+
+    public int countSeat(Date date, String trainCode) {
+        return countSeat(date, trainCode, null);
+    }
     //    计算座位有多少
 
     /**
@@ -128,9 +132,13 @@ public class DailyTrainSeatService {
      */
     public int countSeat(Date date, String trainCode, String seatType) {
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample.setOrderByClause("carriage_seat_index asc");
-        dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode)
-                .andSeatTypeEqualTo(seatType);
+        DailyTrainSeatExample example = new DailyTrainSeatExample();
+        DailyTrainSeatExample.Criteria criteria = example.createCriteria();
+        criteria.andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode);
+        if (StrUtil.isNotBlank(seatType)) {
+            criteria.andSeatTypeEqualTo(seatType);
+        }
         long l = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
         if (l == 0L) {
             return -1;
@@ -138,14 +146,16 @@ public class DailyTrainSeatService {
         return (int) l;
     }
 
+
     /**
      * 根据条件获取座位
+     *
      * @param date
      * @param trainCode
      * @param carriageIndex
      * @return
      */
-    public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode,Integer carriageIndex){
+    public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode, Integer carriageIndex) {
         DailyTrainSeatExample example = new DailyTrainSeatExample();
         example.createCriteria()
                 .andDateEqualTo(date)

@@ -7,6 +7,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.Train;
+import com.jiawa.train.common.exception.BusinessException;
+import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.domain.DailyTrain;
@@ -44,7 +46,12 @@ public class DailyTrainService {
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
 
+    @Resource
+    private SkTokenService skTokenService;
+
     private static final Logger Log = LoggerFactory.getLogger(DailyTrainService.class);
+
+
 
     /**
      * 新增乘车人
@@ -105,7 +112,6 @@ public class DailyTrainService {
 
     //    生成某日所有车次信息，包括车次，车站，车厢，座位
     public void genDaily(Date date) {
-        System.out.println(1);
 //        获取所有车次信息
         List<Train> trainList = trainService.selectAll();
 //        做空判断，防止空指针异常
@@ -145,5 +151,8 @@ public class DailyTrainService {
 
 //        生成余票信息
         dailyTrainTicketService.genDaily(dailyTrain,date, train.getCode());
+
+//        生成令牌信息
+        skTokenService.genDaily(date,train.getCode());
     }
 }
