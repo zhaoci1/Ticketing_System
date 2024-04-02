@@ -108,7 +108,7 @@ public class ConfirmOrderService {
      *
      * @param req
      */
-    public void doConfirm(ConfirmOrderDoReq req) {
+    public synchronized void doConfirm(ConfirmOrderDoReq req) {
 //        保存确认订单表，状态初始
         DateTime now = DateTime.now();
         Date date = req.getDate();

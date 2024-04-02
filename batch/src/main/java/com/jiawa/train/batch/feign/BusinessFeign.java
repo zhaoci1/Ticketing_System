@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Date;
 
 //name为服务名
-//@FeignClient(name = "business", url = "http://localhost:8002/business")
-@FeignClient(name = "business")
+@FeignClient(name = "business", url = "http://localhost:8002/business")
+//@FeignClient(name = "business")
 public interface BusinessFeign {
     @GetMapping("/business/admin/train/queryList")
     AxiosResult queryList();
