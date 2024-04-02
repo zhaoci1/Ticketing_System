@@ -56,7 +56,7 @@ public class ConfirmOrderService {
     private AfterConfirmOrderService afterConfirmOrderService;
 
     @Resource
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
@@ -69,7 +69,7 @@ public class ConfirmOrderService {
     public int save(ConfirmOrderDoReq req) {
         String key = req.getDate() + "-" + req.getTrainCode();
 //        如果不存在，就往里面set
-        Boolean b = redisTemplate.opsForValue().setIfAbsent(key, "1", 5, TimeUnit.SECONDS);
+        Boolean b = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", 5, TimeUnit.SECONDS);
         if (b) {
             Log.info("恭喜，抢到锁了！");
         } else {
