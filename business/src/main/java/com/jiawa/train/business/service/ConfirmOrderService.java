@@ -28,11 +28,14 @@ import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConfirmOrderService {
@@ -52,6 +55,9 @@ public class ConfirmOrderService {
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
 
+    @Resource
+    private StringRedisTemplate redisTemplate;
+
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
     /**
@@ -61,6 +67,17 @@ public class ConfirmOrderService {
      * @return
      */
     public int save(ConfirmOrderDoReq req) {
+        String key = req.getDate() + "-" + req.getTrainCode();
+//        如果不存在，就往里面set
+        Boolean b = redisTemplate.opsForValue().setIfAbsent(key, "1", 5, TimeUnit.SECONDS);
+        if (b) {
+            Log.info("恭喜，抢到锁了！");
+        } else {
+//            只是没抢到锁，并不知道票抢完了没有，所以提示稍后再试
+            Log.info("很遗憾，没抢到锁！");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
+
         DateTime now = DateTime.now();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
         int state;
@@ -108,7 +125,7 @@ public class ConfirmOrderService {
      *
      * @param req
      */
-    public synchronized void doConfirm(ConfirmOrderDoReq req) {
+    public void doConfirm(ConfirmOrderDoReq req) {
 //        保存确认订单表，状态初始
         DateTime now = DateTime.now();
         Date date = req.getDate();
@@ -199,7 +216,7 @@ public class ConfirmOrderService {
         Log.info("最终选座:{}", finalSeatList);
 
 //        选座后的事务处理
-        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList,tickets,confirmOrder);
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
     }
 
     /**
