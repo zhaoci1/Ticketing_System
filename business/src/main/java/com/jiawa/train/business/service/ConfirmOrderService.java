@@ -132,11 +132,6 @@ public class ConfirmOrderService {
             boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS);
             if (tryLock) {
                 Log.info("恭喜，抢到锁了!");
-                for (int i = 0; i < 30; i++) {
-                    Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
-                    Log.info("锁过期时间还有：{}",expire);
-                    Thread.sleep(1000);
-                }
             } else {
                 Log.info("很遗憾，没抢到锁!");
                 throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
