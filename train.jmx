@@ -10,7 +10,7 @@
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="train">
-        <intProp name="ThreadGroup.num_threads">100</intProp>
+        <intProp name="ThreadGroup.num_threads">300</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -34,8 +34,8 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-    &quot;dailyTrainTicketId&quot;: &quot;1774777791615733760&quot;,&#xd;
-    &quot;date&quot;: &quot;2024-04-16&quot;,&#xd;
+    &quot;dailyTrainTicketId&quot;: &quot;1774996708959326208&quot;,&#xd;
+    &quot;date&quot;: &quot;2024-04-17&quot;,&#xd;
     &quot;trainCode&quot;: &quot;G1&quot;,&#xd;
     &quot;start&quot;: &quot;广州&quot;,&#xd;
     &quot;end&quot;: &quot;深圳&quot;,&#xd;

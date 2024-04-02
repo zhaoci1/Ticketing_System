@@ -3,6 +3,7 @@ package com.jiawa.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -26,8 +27,10 @@ import com.jiawa.train.business.req.ConfirmOrderQuery;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;
 import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,10 @@ public class ConfirmOrderService {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    private RedissonClient redissonClient;
 
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
@@ -115,10 +122,10 @@ public class ConfirmOrderService {
      * @param req
      */
     public void doConfirm(ConfirmOrderDoReq req) {
-        String key = req.getDate() + "-" + req.getTrainCode();
-//        如果不存在，就往里面set
-        Boolean b = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", 5, TimeUnit.SECONDS);
-        if (b) {
+        String lockKey = DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
+        //        如果不存在，就往里面set
+        Boolean b = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        if (Boolean.TRUE.equals(b)) {
             Log.info("恭喜，抢到锁了！");
         } else {
 //            只是没抢到锁，并不知道票抢完了没有，所以提示稍后再试
@@ -126,8 +133,7 @@ public class ConfirmOrderService {
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
         }
 
-
-//        保存确认订单表，状态初始
+        //        保存确认订单表，状态初始
         DateTime now = DateTime.now();
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
@@ -216,13 +222,16 @@ public class ConfirmOrderService {
         }
         Log.info("最终选座:{}", finalSeatList);
 
-        try{
+        try {
             //        选座后的事务处理
             afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
-        }catch (Exception e){
-            Log.error("很遗憾，没抢到锁！");
+        } catch (Exception e) {
+            Log.error("购买失败");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
+        Log.info("购票流程结束，释放锁");
+        stringRedisTemplate.delete(lockKey);
+
     }
 
     /**
