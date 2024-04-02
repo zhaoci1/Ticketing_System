@@ -60,6 +60,10 @@ const routes = [
         path: "business/",
         children: [
           {
+            path: "sk_token",
+            component: () => import("../views/main/business/SkToken.vue"),
+          },
+          {
             path: "daily-train",
             component: () => import("../views/main/business/DailyTrain.vue"),
           },

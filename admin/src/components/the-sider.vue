@@ -37,7 +37,16 @@
             业务管理
           </span>
         </template>
-        
+        <a-menu-item key="/business/sk_token">
+          <router-link to="/business/sk_token">
+            <user-outlined /> &nbsp; 令牌余量
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="/business/confirm_order">
+          <router-link to="/business/confirm_order">
+            <user-outlined /> &nbsp; 订单信息
+          </router-link>
+        </a-menu-item>
         <a-menu-item key="/business/daily-train_ticket">
           <router-link to="/business/daily-train_ticket">
             <user-outlined /> &nbsp; 余票信息
@@ -63,11 +72,7 @@
             <user-outlined /> &nbsp; 每日座位
           </router-link>
         </a-menu-item>
-        <a-menu-item key="/business/confirm_order">
-          <router-link to="/business/confirm_order">
-            <user-outlined /> &nbsp; 订单信息
-          </router-link>
-        </a-menu-item>
+        
         
       </a-sub-menu>
 

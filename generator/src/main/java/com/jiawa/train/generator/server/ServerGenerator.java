@@ -16,9 +16,9 @@ public class ServerGenerator {
     static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
     static String pomPath = "generator/pom.xml";
     //    vue界面的路径
-    static String vuePath = "/src/views/main/";
+    static String vuePath = "admin/src/views/main/";
     //    表示生成的界面是不是只读的界面，如果为false的话，会生成增删改查，如果为true，则只生成查
-    static boolean readOnly = true;
+    static boolean readOnly = false;
 
     static String module = "";
 
