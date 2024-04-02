@@ -131,15 +131,15 @@ public class DailyTrainSeatService {
      * @param seatType  座位类型
      */
     public int countSeat(Date date, String trainCode, String seatType) {
-        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
         DailyTrainSeatExample example = new DailyTrainSeatExample();
         DailyTrainSeatExample.Criteria criteria = example.createCriteria();
+
         criteria.andDateEqualTo(date)
                 .andTrainCodeEqualTo(trainCode);
         if (StrUtil.isNotBlank(seatType)) {
             criteria.andSeatTypeEqualTo(seatType);
         }
-        long l = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
+        long l = dailyTrainSeatMapper.countByExample(example);
         if (l == 0L) {
             return -1;
         }
