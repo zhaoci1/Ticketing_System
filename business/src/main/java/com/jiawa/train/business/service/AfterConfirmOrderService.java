@@ -43,7 +43,7 @@ public class AfterConfirmOrderService {
      *
      * @param finalSeatList 选好的座位列表
      */
-    @Transactional
+//    @Transactional
     public void afterDoConfirm(
             DailyTrainTicket dailyTrainTicket,
             List<DailyTrainSeat> finalSeatList,

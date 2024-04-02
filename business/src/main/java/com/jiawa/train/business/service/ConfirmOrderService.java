@@ -216,8 +216,13 @@ public class ConfirmOrderService {
         }
         Log.info("最终选座:{}", finalSeatList);
 
-//        选座后的事务处理
-        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
+        try{
+            //        选座后的事务处理
+            afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
+        }catch (Exception e){
+            Log.error("很遗憾，没抢到锁！");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
+        }
     }
 
     /**
