@@ -8,6 +8,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
+import com.jiawa.train.business.mapper.cust.SkTokenMapperCust;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.mapper.SkTokenMapper;
@@ -33,6 +34,9 @@ public class SkTokenService {
 
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
+
+    @Resource
+    private SkTokenMapperCust skTokenMapperCust;
 
 
     private static final Logger Log = LoggerFactory.getLogger(SkTokenService.class);
@@ -114,5 +118,14 @@ public class SkTokenService {
 
         skToken.setCount(count);
         skTokenMapper.insert(skToken);
+    }
+
+    public boolean validSkToken(Date date, String trainCode) {
+        int decrease = skTokenMapperCust.decrease(date, trainCode);
+        if(decrease>0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

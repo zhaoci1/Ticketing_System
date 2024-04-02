@@ -66,6 +66,10 @@ public class ConfirmOrderService {
     @Autowired
     private RedissonClient redissonClient;
 
+    @Resource
+    private SkTokenService skTokenService;
+
+
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
     /**
@@ -123,6 +127,14 @@ public class ConfirmOrderService {
      * @param req
      */
     public void doConfirm(ConfirmOrderDoReq req) {
+        boolean validSkToen =  skTokenService.validSkToken(req.getDate(),req.getTrainCode());
+        if(validSkToen){
+            Log.info("令牌校验通过");
+        }else{
+            Log.info("令牌校验通过");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
+        }
+
         String lockKey = DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
 
         RLock lock = null;
@@ -291,7 +303,6 @@ public class ConfirmOrderService {
                     continue;
                 }
 
-
 //                对不支持自助选座的座位进行选座
                 if (StrUtil.isBlank(column)) {
                     Log.info("无选座");
@@ -363,8 +374,13 @@ public class ConfirmOrderService {
      */
     private boolean calSell(DailyTrainSeat dailyTrainSeat, Integer startIndex, Integer endIndex) {
         String sell = dailyTrainSeat.getSell();
+//        System.out.println("长度为："+);
 //        售卖信息
-        String sellPart = sell.substring(startIndex, endIndex);
+        String sellPart = "0";
+        if(sell.length()!=1){
+             sellPart = sell.substring(startIndex, endIndex);
+        }
+
         if (Integer.parseInt(sellPart) > 0) {
             Log.info("座位{}在本次车站区间内{}-{}已售过票,该座位不可选",
                     dailyTrainSeat.getCarriageSeatIndex(), startIndex, endIndex);
