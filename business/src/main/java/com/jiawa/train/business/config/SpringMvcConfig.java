@@ -17,14 +17,15 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(loginterceptor);
+        registry.addInterceptor(loginterceptor)
+                .addPathPatterns("/**");
 
         registry.addInterceptor(memberIntercceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/member/hello",
-                        "/member/member/sendCode",
-                        "/member/member/login"
+                        "/hello",
+                        "/member/sendCode",
+                        "/member/login"
                 );
     }
 }
