@@ -67,17 +67,6 @@ public class ConfirmOrderService {
      * @return
      */
     public int save(ConfirmOrderDoReq req) {
-        String key = req.getDate() + "-" + req.getTrainCode();
-//        如果不存在，就往里面set
-        Boolean b = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", 5, TimeUnit.SECONDS);
-        if (b) {
-            Log.info("恭喜，抢到锁了！");
-        } else {
-//            只是没抢到锁，并不知道票抢完了没有，所以提示稍后再试
-            Log.info("很遗憾，没抢到锁！");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-        }
-
         DateTime now = DateTime.now();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
         int state;
@@ -126,6 +115,18 @@ public class ConfirmOrderService {
      * @param req
      */
     public void doConfirm(ConfirmOrderDoReq req) {
+        String key = req.getDate() + "-" + req.getTrainCode();
+//        如果不存在，就往里面set
+        Boolean b = stringRedisTemplate.opsForValue().setIfAbsent(key, "1", 5, TimeUnit.SECONDS);
+        if (b) {
+            Log.info("恭喜，抢到锁了！");
+        } else {
+//            只是没抢到锁，并不知道票抢完了没有，所以提示稍后再试
+            Log.info("很遗憾，没抢到锁！");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
+
+
 //        保存确认订单表，状态初始
         DateTime now = DateTime.now();
         Date date = req.getDate();
