@@ -18,10 +18,12 @@ import com.jiawa.train.business.resp.SkTokenQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class SkTokenService {
@@ -37,6 +39,9 @@ public class SkTokenService {
 
     @Resource
     private SkTokenMapperCust skTokenMapperCust;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
 
     private static final Logger Log = LoggerFactory.getLogger(SkTokenService.class);
@@ -90,6 +95,11 @@ public class SkTokenService {
         return skTokenMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 新增令牌
+     * @param date
+     * @param trainCode
+     */
     public void genDaily(Date date, String trainCode) {
         Log.info("删除日期[{}]车次[{}]的令牌记录", DateUtil.formatDate(date), trainCode);
         Log.info("开始生成日期：{}车次{}的车站信息", date, trainCode);
@@ -120,7 +130,21 @@ public class SkTokenService {
         skTokenMapper.insert(skToken);
     }
 
-    public boolean validSkToken(Date date, String trainCode) {
+    /**
+     * 获取符合返回值，为0则表示没有修改
+     * @param date
+     * @param trainCode
+     * @return
+     */
+    public boolean validSkToken(Date date, String trainCode,Long memberId) {
+        String lockKey = DateUtil.formatDate(date)+"-"+trainCode+"-"+memberId;
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        if(Boolean.TRUE.equals(setIfAbsent)){
+            Log.info("抢到令牌锁{}",lockKey);
+        }else {
+            Log.info("没抢到令牌锁{}",lockKey);
+            return false;
+        }
         int decrease = skTokenMapperCust.decrease(date, trainCode);
         if(decrease>0){
             return true;

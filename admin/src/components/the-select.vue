@@ -39,7 +39,7 @@ export default defineComponent({
     const queryTrainAll = () => {
       let list = window.sessionStorage.getItem("SESSION_ALL_TRAIN");
       if (list != null) {
-        trainAll.value = list;
+        trainAll.value = JSON.parse(list);
       } else {
         Axios.queryAll().then((res) => {
           if (res.code == 200) {

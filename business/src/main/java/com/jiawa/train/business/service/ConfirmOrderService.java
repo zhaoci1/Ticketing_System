@@ -127,11 +127,11 @@ public class ConfirmOrderService {
      * @param req
      */
     public void doConfirm(ConfirmOrderDoReq req) {
-        boolean validSkToen =  skTokenService.validSkToken(req.getDate(),req.getTrainCode());
+        boolean validSkToen =  skTokenService.validSkToken(req.getDate(),req.getTrainCode(),LoginMemberContext.getMember().getId());
         if(validSkToen){
             Log.info("令牌校验通过");
         }else{
-            Log.info("令牌校验通过");
+            Log.info("令牌未通过");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
         }
 
