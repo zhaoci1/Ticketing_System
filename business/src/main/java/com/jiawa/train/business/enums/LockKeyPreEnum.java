@@ -2,7 +2,8 @@ package com.jiawa.train.business.enums;
 
 public enum LockKeyPreEnum {
     CONFIRM_ORDER("LOCK_CONFIRM_ORDER","一等座"),
-    SK_TOKEN("LOCK_SK_TOKEN","二等座");
+    SK_TOKEN("LOCK_SK_TOKEN","二等座"),
+    SK_TOKEN_COUNT("SK_TOKEN_COUNT","二等座");
 
    private final String code;
    private final String desc;

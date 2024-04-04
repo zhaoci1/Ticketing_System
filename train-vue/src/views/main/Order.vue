@@ -24,6 +24,33 @@
       :options="passengerOptions"
     ></a-checkbox-group>
     <br />
+    <a-modal
+      v-model:visible="imageCodeModalVisible"
+      :title="null"
+      :footer="null"
+      :closable="false"
+      style="top: 50px; width: 400px"
+    >
+      <p style="text-align: center; font-weight: bold; font-size: 18px">
+        使用服务端验证码削弱瞬时高峰<br />
+        防止机器人刷票
+      </p>
+      <p>
+        <a-input v-model:value="imageCode" placeholder="图片验证码">
+          <template #suffix>
+            <img
+              v-show="!!imageCodeSrc"
+              :src="imageCodeSrc"
+              alt="验证码"
+              v-on:click="loadImageCode()"
+            />
+          </template>
+        </a-input>
+      </p>
+      <a-button type="danger" block @click="handleOk"
+        >输入验证码后开始购票</a-button
+      >
+    </a-modal>
     <a-table :dataSource="passengerChecks" :columns="columns">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'seatTypeCode'">
@@ -52,7 +79,11 @@
     </a-table>
 
     <a-button @click="finishCheckPassenger">提交订单</a-button>
-    <a-modal v-model:visible="visible" title="Basic Modal" @ok="handleOk">
+    <a-modal
+      v-model:visible="visible"
+      title="Basic Modal"
+      @ok="showFirstImageCodeModal"
+    >
       <a-table :dataSource="passengerChecks" :columns="columns">
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'passengerCode'">
@@ -118,6 +149,12 @@ export default defineComponent({
     const passengerChecks = ref([]);
     // 用来存储乘客的购买信息
     const tickets = ref([]);
+
+    const imageCodeModalVisible = ref();
+    const imageCodeToken = ref();
+    const imageCodeSrc = ref();
+    const imageCode = ref();
+
     const dailyTrainTicket = SessionStorage.get("dailyTrainTicket") || {};
     const SEAT_TYPE = window.SEAT_TYPE;
 
@@ -202,6 +239,10 @@ export default defineComponent({
       });
     };
     const handleOk = () => {
+      if (imageCode.value == null) {
+        message.error("验证码不能为空!");
+        return;
+      }
       // 设置每张票的座位,先清空座位
       for (let i = 0; i < passengerChecks.value.length; i++) {
         passengerChecks.value[i].seat = null;
@@ -221,8 +262,6 @@ export default defineComponent({
         message.error("选座数小于购票数");
         return;
       }
-      console.log("passengerChecks", passengerChecks.value);
-      console.log("tickets", tickets.value);
       let ticketList = [];
       passengerChecks.value.forEach((item) => {
         ticketList.push({
@@ -241,13 +280,26 @@ export default defineComponent({
         start: dailyTrainTicket.start,
         end: dailyTrainTicket.end,
         tickets: ticketList,
-      }).then(res=>{
-        if(res.code!=200){
-          message.error(res.message)
-        }else{
-          message.success(res.message)
+        imageCodeToken: imageCodeToken.value,
+        imageCode: imageCode.value,
+      }).then((res) => {
+        if (res.code != 200) {
+          message.error(res.message);
+        } else {
+          message.success(res.message);
         }
       });
+    };
+    const showFirstImageCodeModal = () => {
+      loadImageCode();
+      imageCodeModalVisible.value = true;
+    };
+    const loadImageCode = () => {
+      imageCodeToken.value = Tool.uuid(8);
+      imageCodeSrc.value =
+        process.env.VUE_APP_SERVER +
+        "/business/kaptcha/image-code/" +
+        imageCodeToken.value;
     };
     const finishCheckPassenger = () => {
       let seatTypesTemp = JSON.parse(JSON.stringify(seatTypes));
@@ -334,6 +386,9 @@ export default defineComponent({
       handleQueryPassenger();
     });
     return {
+      showFirstImageCodeModal,
+      imageCodeModalVisible,
+      imageCodeToken,
       dailyTrainTicket,
       seatTypes,
       passengerList,
@@ -349,6 +404,9 @@ export default defineComponent({
       chooseSeatType,
       chooseSeatObj,
       SEAT_COL_ARRAY,
+      imageCode,
+      imageCodeSrc,
+      loadImageCode,
     };
   },
 });

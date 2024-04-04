@@ -56,21 +56,9 @@ public class ConfirmOrderDoReq {
     @NotEmpty(message = "【车票】不能为空")
     private List<ConfirmOrderTicketReq> tickets;
 
+    @NotBlank(message = "【图片验证码】验证码不能为空")
+    private String imageCode;
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", memberId=").append(memberId);
-        sb.append(", date=").append(date);
-        sb.append(", trainCode=").append(trainCode);
-        sb.append(", start=").append(start);
-        sb.append(", end=").append(end);
-        sb.append(", dailyTrainTicketId=").append(dailyTrainTicketId);
-        sb.append(", tickets=").append(tickets);
-        sb.append("]");
-        return sb.toString();
-    }
+    @NotBlank(message = "【图片验证码】参数违法")
+    private String imageCodeToken;
 }

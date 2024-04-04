@@ -8,7 +8,10 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
+import com.jiawa.train.business.enums.LockKeyPreEnum;
 import com.jiawa.train.business.mapper.cust.SkTokenMapperCust;
+import com.jiawa.train.common.exception.BusinessException;
+import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.mapper.SkTokenMapper;
@@ -18,7 +21,9 @@ import com.jiawa.train.business.resp.SkTokenQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -40,8 +45,8 @@ public class SkTokenService {
     @Resource
     private SkTokenMapperCust skTokenMapperCust;
 
-    @Resource
-    private RedisTemplate redisTemplate;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
 
     private static final Logger Log = LoggerFactory.getLogger(SkTokenService.class);
@@ -97,6 +102,7 @@ public class SkTokenService {
 
     /**
      * 新增令牌
+     *
      * @param date
      * @param trainCode
      */
@@ -124,7 +130,7 @@ public class SkTokenService {
         long stationCount = dailyTrainStationService.countByTrainCode(date, trainCode);
         Log.info("车次[{}]，到站数[{}]", trainCode, stationCount);
 //        获取最多能卖的票，按照3/4的比例卖
-        int count = (int) (countSeat * stationCount * 3 / 4);
+        int count = (int) (countSeat * stationCount);
 
         skToken.setCount(count);
         skTokenMapper.insert(skToken);
@@ -132,24 +138,67 @@ public class SkTokenService {
 
     /**
      * 获取符合返回值，为0则表示没有修改
+     *
      * @param date
      * @param trainCode
      * @return
      */
-    public boolean validSkToken(Date date, String trainCode,Long memberId) {
-        String lockKey = DateUtil.formatDate(date)+"-"+trainCode+"-"+memberId;
+    public boolean validSkToken(Date date, String trainCode, Long memberId) {
+//        线程之间抢令牌锁
+        String lockKey = LockKeyPreEnum.SK_TOKEN + "-" + DateUtil.formatDate(date) + "-" + trainCode + "-" + memberId;
         Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-        if(Boolean.TRUE.equals(setIfAbsent)){
-            Log.info("抢到令牌锁{}",lockKey);
-        }else {
-            Log.info("没抢到令牌锁{}",lockKey);
+        if (Boolean.TRUE.equals(setIfAbsent)) {
+            Log.info("抢到令牌锁{}", lockKey);
+        } else {
+            Log.info("没抢到令牌锁{}", lockKey);
             return false;
         }
-        int decrease = skTokenMapperCust.decrease(date, trainCode);
-        if(decrease>0){
+
+//        生成key，用于令牌存入缓存
+        String skTokenCountKey = LockKeyPreEnum.SK_TOKEN_COUNT + "-" + DateUtil.formatDate(date) + "-" + trainCode;
+//        获取令牌数量
+        Object skTokenCount = redisTemplate.opsForValue().get(skTokenCountKey);
+        if (skTokenCount != null) {
+            Log.info("缓存中有该车次令牌", skTokenCountKey);
+//            对缓存进行-1的操作
+            Long count = redisTemplate.opsForValue().decrement(skTokenCountKey, 1);
+//            判断减完之后的count是否小于0
+            if (count < 0L) {
+                Log.info("获取令牌失败", skTokenCountKey);
+                return false;
+            } else {
+                Log.info("获取到令牌，令牌余数：{}", count);
+                //            并发量比较大的时候，一直刷新key的持续时间
+                redisTemplate.expire(skTokenCountKey, 60, TimeUnit.SECONDS);
+//                每获取5个令牌就更新一次数据库
+                if (count % 5 == 0) {
+                    skTokenMapperCust.decrease(date, trainCode, 5);
+                }
+                return true;
+            }
+        } else {
+            Log.info("缓存中没有该车次的令牌key：{}", skTokenCountKey);
+            SkTokenExample skTokenExample = new SkTokenExample();
+            skTokenExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+            List<SkToken> skTokens = skTokenMapper.selectByExample(skTokenExample);
+            if (CollUtil.isEmpty(skTokens)) {
+                Log.info("找不到日期：【{}】车次【{}】的令牌记录", DateUtil.formatDate(date), trainCode);
+                return false;
+            }
+            SkToken skToken = skTokens.get(0);
+            if (skToken.getCount() <= 0) {
+                Log.info("找不到日期：【{}】车次【{}】的令牌余量为0", DateUtil.formatDate(date), trainCode);
+                return false;
+            }
+//            走到这儿来表示令牌还有余量
+//                    令牌余量-1
+            Integer count = skToken.getCount() - 1;
+            skToken.setCount(count);
+            Log.info("将该车次令牌放入缓存中，key：{}，count：{}", skTokenCountKey, count);
+            redisTemplate.opsForValue().set(skTokenCountKey, String.valueOf(count), 60, TimeUnit.SECONDS);
             return true;
-        }else{
-            return false;
         }
+
     }
+
 }
