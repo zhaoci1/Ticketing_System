@@ -9,6 +9,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -128,6 +129,7 @@ public class ConfirmOrderService {
      *
      * @param req
      */
+    @SentinelResource("doConfirm")
     public void doConfirm(ConfirmOrderDoReq req) {
         boolean validSkToen = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMember().getId());
         if (validSkToen) {

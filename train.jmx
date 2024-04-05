@@ -8,7 +8,7 @@
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="train">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.num_threads">10</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -32,21 +32,23 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-    &quot;dailyTrainTicketId&quot;: &quot;1774996708959326208&quot;,&#xd;
-    &quot;date&quot;: &quot;2024-04-17&quot;,&#xd;
-    &quot;trainCode&quot;: &quot;G1&quot;,&#xd;
-    &quot;start&quot;: &quot;广州&quot;,&#xd;
-    &quot;end&quot;: &quot;深圳&quot;,&#xd;
-    &quot;tickets&quot;: [&#xd;
-        {&#xd;
-            &quot;passengerId&quot;: &quot;1767105676838047744&quot;,&#xd;
-            &quot;passengerName&quot;: &quot;tom&quot;,&#xd;
-            &quot;passengerIdCard&quot;: &quot;34534342424&quot;,&#xd;
-            &quot;passengerType&quot;: &quot;1&quot;,&#xd;
-            &quot;seat&quot;: null,&#xd;
-            &quot;seatTypeCode&quot;: &quot;1&quot;&#xd;
-        }&#xd;
-    ]&#xd;
+  &quot;dailyTrainTicketId&quot;: &quot;1775174572400840704&quot;,&#xd;
+  &quot;date&quot;: &quot;2024-04-11&quot;,&#xd;
+  &quot;trainCode&quot;: &quot;G1&quot;,&#xd;
+  &quot;start&quot;: &quot;广州&quot;,&#xd;
+  &quot;end&quot;: &quot;深圳&quot;,&#xd;
+  &quot;tickets&quot;: [&#xd;
+    {&#xd;
+      &quot;passengerId&quot;: &quot;1767105676838047744&quot;,&#xd;
+      &quot;passengerName&quot;: &quot;tom&quot;,&#xd;
+      &quot;passengerIdCard&quot;: &quot;34534342424&quot;,&#xd;
+      &quot;passengerType&quot;: &quot;1&quot;,&#xd;
+      &quot;seat&quot;: null,&#xd;
+      &quot;seatTypeCode&quot;: &quot;1&quot;&#xd;
+    }&#xd;
+  ],&#xd;
+  &quot;imageCodeToken&quot;: &quot;X6QuFUhK&quot;,&#xd;
+  &quot;imageCode&quot;: &quot;fpnb&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -62,7 +64,7 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">token</stringProp>
-                <stringProp name="Header.value">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTE5NzA4NjIsIm1vYmlsZSI6IjEyMzQ1Njc4OTA5IiwiaWQiOjE3NjYwNjg4MTY5MzQyMTE1ODQsImV4cCI6MTcxMjA1NzI2MiwiaWF0IjoxNzExOTcwODYyfQ.99fc7V_t7EHS6Cbe2fXsAvk0evA37IdwUiCS2fCZkhg</stringProp>
+                <stringProp name="Header.value">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTIyNzk2MTksIm1vYmlsZSI6IjEyMzQ1Njc4OTA5IiwiaWQiOjE3NjYwNjg4MTY5MzQyMTE1ODQsImV4cCI6MTcxMjM2NjAxOSwiaWF0IjoxNzEyMjc5NjE5fQ.BZr8ShwAkHmePg2tvapkAw95_CePR214b__XoyMtLwo</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
