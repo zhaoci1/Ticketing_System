@@ -1,19 +1,20 @@
 package com.jiawa.train.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.jiawa.train.business.req.ConfirmOrderTicketReq;
-import com.jiawa.train.business.service.DailyTrainCarriageService;
-import com.jiawa.train.common.resp.AxiosResult;
-import com.jiawa.train.business.req.ConfirmOrderQuery;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;
+import com.jiawa.train.business.service.BeforeConfirmOrderService;
 import com.jiawa.train.business.service.ConfirmOrderService;
+import com.jiawa.train.common.resp.AxiosResult;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/confirm-order")
@@ -23,6 +24,9 @@ public class ConfirmOrderController {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Resource
+    private BeforeConfirmOrderService beforeConfirmOrderService;
 
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderController.class);
 
@@ -43,7 +47,7 @@ public class ConfirmOrderController {
         }else{
             redisTemplate.delete(imageCodeToken);
         }
-        confirmOrderService.doConfirm(req);
+        beforeConfirmOrderService.beforeDoConfirm(req);
         return AxiosResult.success("");
     }
 }

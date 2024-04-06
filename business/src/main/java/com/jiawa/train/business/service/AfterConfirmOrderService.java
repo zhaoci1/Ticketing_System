@@ -9,14 +9,12 @@ import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.mapper.cust.DailyTrainTicketCustMapper;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
-import com.jiawa.train.common.context.LoginMemberContext;
 import com.jiawa.train.common.req.TicketReq;
 import com.jiawa.train.common.resp.AxiosResult;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -100,7 +98,7 @@ public class AfterConfirmOrderService {
                     maxEndIndex
             );
             TicketReq memberTicketReq = new TicketReq();
-            memberTicketReq.setMemberId(LoginMemberContext.getId());
+            memberTicketReq.setMemberId(confirmOrder.getMemberId());
             memberTicketReq.setPassengerId(tickets.get(j).getPassengerId());
             memberTicketReq.setPassengerName(tickets.get(j).getPassengerName());
             memberTicketReq.setTrainDate(dailyTrainTicket.getDate());

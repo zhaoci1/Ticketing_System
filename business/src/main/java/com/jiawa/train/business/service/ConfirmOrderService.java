@@ -8,9 +8,6 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.log.Log;
-import com.alibaba.csp.sentinel.annotation.SentinelResource;
-import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
@@ -18,28 +15,22 @@ import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.enums.LockKeyPreEnum;
 import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.enums.SeatTypeEnum;
+import com.jiawa.train.business.mapper.ConfirmOrderMapper;
+import com.jiawa.train.business.req.ConfirmOrderDoReq;
+import com.jiawa.train.business.req.ConfirmOrderQuery;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
-import com.jiawa.train.common.context.LoginMemberContext;
+import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import com.jiawa.train.common.exception.BusinessException;
 import com.jiawa.train.common.exception.BusinessExceptionEnum;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
-import com.jiawa.train.business.mapper.ConfirmOrderMapper;
-import com.jiawa.train.business.req.ConfirmOrderQuery;
-import com.jiawa.train.business.req.ConfirmOrderDoReq;
-import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
-import org.redisson.RedissonRedLock;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,13 +56,6 @@ public class ConfirmOrderService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
-
-    @Autowired
-    private RedissonClient redissonClient;
-
-    @Resource
-    private SkTokenService skTokenService;
-
 
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderService.class);
 
@@ -129,25 +113,16 @@ public class ConfirmOrderService {
      *
      * @param req
      */
-    @SentinelResource("doConfirm")
     public void doConfirm(ConfirmOrderDoReq req) {
-        boolean validSkToen = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMember().getId());
-        if (validSkToen) {
-            Log.info("令牌校验通过");
-        } else {
-            Log.info("令牌未通过");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
-        }
+        //        获取车次锁
         String lockKey = LockKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
         Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-
         if (Boolean.TRUE.equals(setIfAbsent)) {
-            Log.info("恭喜，抢到锁了!");
+            com.esotericsoftware.minlog.Log.info("恭喜，抢到锁了!");
         } else {
-            Log.info("很遗憾，没抢到锁!");
+            com.esotericsoftware.minlog.Log.info("很遗憾，没抢到锁!");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
         }
-
         //        保存确认订单表，状态初始
         DateTime now = DateTime.now();
         Date date = req.getDate();
@@ -156,19 +131,24 @@ public class ConfirmOrderService {
         String end = req.getEnd();
         List<ConfirmOrderTicketReq> tickets = req.getTickets();
 
-        ConfirmOrder confirmOrder = new ConfirmOrder();
-        confirmOrder.setId(SnowUtil.getSnowflakeNextId());
-        confirmOrder.setMemberId(LoginMemberContext.getId());
-        confirmOrder.setDate(date);
-        confirmOrder.setTrainCode(trainCode);
-        confirmOrder.setStart(start);
-        confirmOrder.setEnd(end);
-        confirmOrder.setDailyTrainTicketId(req.getDailyTrainTicketId());
-        confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
-        confirmOrder.setCreateTime(now);
-        confirmOrder.setUpdateTime(now);
-        confirmOrder.setTickets(JSON.toJSONString(tickets));
-        confirmOrderMapper.insert(confirmOrder);
+//        从数据库里面查出订单
+        ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+        confirmOrderExample.setOrderByClause("id asc");
+        ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
+        criteria.andDateEqualTo(req.getDate())
+                .andTrainCodeEqualTo(req.getTrainCode())
+                .andMemberIdEqualTo(req.getMemberId())
+                .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+//        查询大字段selectByExampleWithBLOBs
+        List<ConfirmOrder> list = confirmOrderMapper.selectByExampleWithBLOBs(confirmOrderExample);
+        ConfirmOrder confirmOrder;
+        if (CollUtil.isEmpty(list)) {
+            Log.info("找不到初始订单，结束");
+            return;
+        } else {
+            Log.info("本次处理{}条确认订单",list.size());
+            confirmOrder = list.get(0);
+        }
 
 
 //        查处余票记录
@@ -244,14 +224,6 @@ public class ConfirmOrderService {
             Log.error("购买失败");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
-//        } catch (InterruptedException e) {
-//            Log.error("购票异常", e);
-//        } finally {
-//            Log.info("购票流程结束，释放锁");
-//            if (null != lock && lock.isHeldByCurrentThread()) {
-//                lock.unlock();
-//            }
-//        }
     }
 
     /**
