@@ -22,9 +22,8 @@ let Axios = {
   doConfirm(data) {
     return myAxios.post("business/confirm-order/do", data);
   },
-  getKaptcha(data) {
-    console.log(myAxios);
-    // return myAxios.get("business/kaptcha/image-code/" + data);
+  queryLineCount(id) {
+    return myAxios.get("business/confirm-order/query-line-count/" + id);
   },
 };
 

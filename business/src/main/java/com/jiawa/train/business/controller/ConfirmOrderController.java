@@ -12,10 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/confirm-order")
@@ -55,5 +52,10 @@ public class ConfirmOrderController {
         }
         Long id = beforeConfirmOrderService.beforeDoConfirm(req);
         return AxiosResult.success(String.valueOf(id));
+    }
+    @GetMapping("/query-line-count/{id}")
+    public AxiosResult queryLineCount(@PathVariable Long id){
+        Integer count = confirmOrderService.queryLineCount(id);
+        return AxiosResult.success(count);
     }
 }

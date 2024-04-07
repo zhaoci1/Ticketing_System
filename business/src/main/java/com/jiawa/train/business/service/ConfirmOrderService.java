@@ -165,6 +165,13 @@ public class ConfirmOrderService {
 
     //        保存确认订单表，状态初始
     private void sell(ConfirmOrder confirmOrder) {
+//        演示排队效果，增加延时
+        try{
+            Thread.sleep(200);
+        }catch (InterruptedException e){
+            throw new RuntimeException(e);
+        }
+
         ConfirmOrderDoReq req = new ConfirmOrderDoReq();
         req.setMemberId(confirmOrder.getMemberId());
         req.setDate(confirmOrder.getDate());
@@ -475,4 +482,32 @@ public class ConfirmOrderService {
         }
     }
 
+    public Integer queryLineCount(Long id) {
+        ConfirmOrder confirmOrder = confirmOrderMapper.selectByPrimaryKey(id);
+//        获取当前订单的状态
+        ConfirmOrderStatusEnum statusEnum = EnumUtil.getBy(ConfirmOrderStatusEnum::getCode, confirmOrder.getStatus());
+        int result = switch(statusEnum){
+            case PENDING -> 0; //排队
+            case SUCCESS -> -1; //成功
+            case FAILURE -> -2; //失败
+            case EMPTY -> -3; // 无票
+            case CANCEL -> -4; //取消
+            case INIT -> 999; //需要查表得到实际排队数量
+        };
+        if(result ==999){
+            ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+//            下面的写法： where a=1 and (b=1 or c=1) 等价于 where (a=1 and b=1) or (a=1 and c=1)
+            confirmOrderExample.or().andDateEqualTo(confirmOrder.getDate())
+                    .andTrainCodeEqualTo(confirmOrder.getTrainCode())
+                    .andCreateTimeLessThan(confirmOrder.getCreateTime())
+                    .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+            confirmOrderExample.or().andDateEqualTo(confirmOrder.getDate())
+                    .andTrainCodeEqualTo(confirmOrder.getTrainCode())
+                    .andCreateTimeLessThan(confirmOrder.getCreateTime())
+                    .andStatusEqualTo(ConfirmOrderStatusEnum.PENDING.getCode());
+//            查询数量，查出来有几条，当前订单就排在第几位
+            return Math.toIntExact(confirmOrderMapper.countByExample(confirmOrderExample));
+        }
+        return result;
+    }
 }
