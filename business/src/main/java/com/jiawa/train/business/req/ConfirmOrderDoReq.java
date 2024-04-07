@@ -1,15 +1,14 @@
 package com.jiawa.train.business.req;
 
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.util.Date;
+import java.util.List;
 
 @Data
 public class ConfirmOrderDoReq {
@@ -18,6 +17,11 @@ public class ConfirmOrderDoReq {
      * 会员id
      */
     private Long memberId;
+
+    /**
+     * 日志跟踪号
+     */
+    private String logId;
 
     /**
      * 日期

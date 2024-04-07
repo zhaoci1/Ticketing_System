@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,24 +29,29 @@ public class ConfirmOrderController {
     @Resource
     private BeforeConfirmOrderService beforeConfirmOrderService;
 
+    @Value("${spring.profiles.active}")
+    private String env;
+
     private static final Logger Log = LoggerFactory.getLogger(ConfirmOrderController.class);
 
 
     @PostMapping("/do")
     public AxiosResult doConfirm(@Valid @RequestBody ConfirmOrderDoReq req) {
-        String imageCodeToken = req.getImageCodeToken();
-        String imageCode = req.getImageCode();
-        String imageCodeRedis = redisTemplate.opsForValue().get(imageCodeToken);
-        Log.info("从redis中获取到验证码：{}",imageCodeRedis);
+        if (!env.equals("dev")) {
+            String imageCodeToken = req.getImageCodeToken();
+            String imageCode = req.getImageCode();
+            String imageCodeRedis = redisTemplate.opsForValue().get(imageCodeToken);
+            Log.info("从redis中获取到验证码：{}", imageCodeRedis);
 
-        if(ObjectUtil.isEmpty(imageCodeRedis)){
-            return AxiosResult.error("验证码已过期");
-        }
+            if (ObjectUtil.isEmpty(imageCodeRedis)) {
+                return AxiosResult.error("验证码已过期");
+            }
 
-        if(!imageCodeRedis.equalsIgnoreCase(imageCode)){
-            return AxiosResult.error("验证码不正确");
-        }else{
-            redisTemplate.delete(imageCodeToken);
+            if (!imageCodeRedis.equalsIgnoreCase(imageCode)) {
+                return AxiosResult.error("验证码不正确");
+            } else {
+                redisTemplate.delete(imageCodeToken);
+            }
         }
         beforeConfirmOrderService.beforeDoConfirm(req);
         return AxiosResult.success("");

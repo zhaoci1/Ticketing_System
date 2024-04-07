@@ -7,22 +7,21 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.*;
+import com.jiawa.train.business.domain.SkToken;
+import com.jiawa.train.business.domain.SkTokenExample;
 import com.jiawa.train.business.enums.LockKeyPreEnum;
-import com.jiawa.train.business.mapper.cust.SkTokenMapperCust;
-import com.jiawa.train.common.exception.BusinessException;
-import com.jiawa.train.common.exception.BusinessExceptionEnum;
-import com.jiawa.train.common.resp.PageResp;
-import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.mapper.SkTokenMapper;
+import com.jiawa.train.business.mapper.cust.SkTokenMapperCust;
 import com.jiawa.train.business.req.SkTokenQuery;
 import com.jiawa.train.business.req.SkTokenReq;
 import com.jiawa.train.business.resp.SkTokenQueryResp;
+import com.jiawa.train.common.resp.PageResp;
+import com.jiawa.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +46,9 @@ public class SkTokenService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Value("${spring.profiles.active}")
+    private String env;
 
 
     private static final Logger Log = LoggerFactory.getLogger(SkTokenService.class);
@@ -144,16 +146,18 @@ public class SkTokenService {
      * @return
      */
     public boolean validSkToken(Date date, String trainCode, Long memberId) {
-//        线程之间抢令牌锁
-        String lockKey = LockKeyPreEnum.SK_TOKEN + "-" + DateUtil.formatDate(date) + "-" + trainCode + "-" + memberId;
-        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-        if (Boolean.TRUE.equals(setIfAbsent)) {
-            Log.info("抢到令牌锁{}", lockKey);
-        } else {
-            Log.info("没抢到令牌锁{}", lockKey);
-            return false;
-        }
 
+        if (!env.equals("dev")) {
+            //        线程之间抢令牌锁
+            String lockKey = LockKeyPreEnum.SK_TOKEN + "-" + DateUtil.formatDate(date) + "-" + trainCode + "-" + memberId;
+            Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+            if (Boolean.TRUE.equals(setIfAbsent)) {
+                Log.info("抢到令牌锁{}", lockKey);
+            } else {
+                Log.info("没抢到令牌锁{}", lockKey);
+                return false;
+            }
+        }
 //        生成key，用于令牌存入缓存
         String skTokenCountKey = LockKeyPreEnum.SK_TOKEN_COUNT + "-" + DateUtil.formatDate(date) + "-" + trainCode;
 //        获取令牌数量
@@ -198,7 +202,6 @@ public class SkTokenService {
             redisTemplate.opsForValue().set(skTokenCountKey, String.valueOf(count), 60, TimeUnit.SECONDS);
             return true;
         }
-
     }
 
 }

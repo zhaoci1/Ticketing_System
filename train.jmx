@@ -2,13 +2,15 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="测试计划">
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="用户定义的变量">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="train">
-        <intProp name="ThreadGroup.num_threads">10</intProp>
+        <intProp name="ThreadGroup.num_threads">200</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -32,11 +34,11 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;dailyTrainTicketId&quot;: &quot;1775174572400840704&quot;,&#xd;
-  &quot;date&quot;: &quot;2024-04-11&quot;,&#xd;
+  &quot;dailyTrainTicketId&quot;: &quot;1776527818214215680&quot;,&#xd;
+  &quot;date&quot;: &quot;2024-04-18&quot;,&#xd;
   &quot;trainCode&quot;: &quot;G1&quot;,&#xd;
-  &quot;start&quot;: &quot;广州&quot;,&#xd;
-  &quot;end&quot;: &quot;深圳&quot;,&#xd;
+  &quot;start&quot;: &quot;上海&quot;,&#xd;
+  &quot;end&quot;: &quot;广州&quot;,&#xd;
   &quot;tickets&quot;: [&#xd;
     {&#xd;
       &quot;passengerId&quot;: &quot;1767105676838047744&quot;,&#xd;
@@ -47,8 +49,8 @@
       &quot;seatTypeCode&quot;: &quot;1&quot;&#xd;
     }&#xd;
   ],&#xd;
-  &quot;imageCodeToken&quot;: &quot;X6QuFUhK&quot;,&#xd;
-  &quot;imageCode&quot;: &quot;fpnb&quot;&#xd;
+  &quot;imageCodeToken&quot;: &quot;nEkbERAv&quot;,&#xd;
+  &quot;imageCode&quot;: &quot;3e8a&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -64,7 +66,7 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">token</stringProp>
-                <stringProp name="Header.value">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTIyNzk2MTksIm1vYmlsZSI6IjEyMzQ1Njc4OTA5IiwiaWQiOjE3NjYwNjg4MTY5MzQyMTE1ODQsImV4cCI6MTcxMjM2NjAxOSwiaWF0IjoxNzEyMjc5NjE5fQ.BZr8ShwAkHmePg2tvapkAw95_CePR214b__XoyMtLwo</stringProp>
+                <stringProp name="Header.value">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTI0NTc2MjgsIm1vYmlsZSI6IjEyMzQ1Njc4OTA5IiwiaWQiOjE3NjYwNjg4MTY5MzQyMTE1ODQsImV4cCI6MTcxMjU0NDAyOCwiaWF0IjoxNzEyNDU3NjI4fQ.kbT5Poj4ThZXJ6KeJ6XhjF3fuepmFHMDt3Qnqz7igOY</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>

@@ -8,8 +8,10 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.dto.ConfirmOrderMQDto;
 import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.enums.LockKeyPreEnum;
@@ -111,45 +113,79 @@ public class ConfirmOrderService {
     /**
      * 保存车票
      *
-     * @param req
+     * @param dto
      */
-    public void doConfirm(ConfirmOrderDoReq req) {
+    public void doConfirm(ConfirmOrderMQDto dto) {
         //        获取车次锁
-        String lockKey = LockKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
-        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        String lockKey = LockKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(dto.getDate()) + "-" + dto.getTrainCode();
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 10, TimeUnit.SECONDS);
         if (Boolean.TRUE.equals(setIfAbsent)) {
-            com.esotericsoftware.minlog.Log.info("恭喜，抢到锁了!");
+            Log.info("恭喜，抢到锁了!");
         } else {
-            com.esotericsoftware.minlog.Log.info("很遗憾，没抢到锁!");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+            Log.info("很遗憾，有其他消费线程正在出票，不做任何处理");
+            return;
         }
-        //        保存确认订单表，状态初始
-        DateTime now = DateTime.now();
+
+        try {
+            while (true) {
+                ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+                confirmOrderExample.setOrderByClause("id asc");
+                ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
+                criteria.andDateEqualTo(dto.getDate())
+                        .andTrainCodeEqualTo(dto.getTrainCode())
+                        .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+                PageHelper.startPage(1, 5);
+                List<ConfirmOrder> list = confirmOrderMapper.selectByExampleWithBLOBs(confirmOrderExample);
+                if (CollUtil.isEmpty(list)) {
+                    Log.info("没有需要处理的订单，结束循环");
+                    break;
+                } else {
+                    Log.info("本次处理{}条订单", list.size());
+                }
+//                一条一条的卖
+                list.forEach(confirmOrder -> {
+                    try {
+                        sell(confirmOrder);
+                    } catch (BusinessException e) {
+                        if (e.getE().equals(BusinessExceptionEnum.BUSINESS_ORDER_TICKET_COUNT_ERROR)) {
+                            Log.info("本订单余票不足，继续售卖下一个订单");
+                            confirmOrder.setStatus(ConfirmOrderStatusEnum.EMPTY.getCode());
+                            updateStatus(confirmOrder);
+                        } else {
+                            throw e;
+                        }
+                    }
+                });
+            }
+        } finally {
+            Log.error("购票流程结束，释放锁{}", lockKey);
+            redisTemplate.delete(lockKey);
+        }
+    }
+
+    //        保存确认订单表，状态初始
+    private void sell(ConfirmOrder confirmOrder) {
+        ConfirmOrderDoReq req = new ConfirmOrderDoReq();
+        req.setMemberId(confirmOrder.getMemberId());
+        req.setDate(confirmOrder.getDate());
+        req.setTrainCode(confirmOrder.getTrainCode());
+        req.setStart(confirmOrder.getStart());
+        req.setEnd(confirmOrder.getEnd());
+        req.setDailyTrainTicketId(confirmOrder.getDailyTrainTicketId());
+        req.setTickets(JSON.parseArray(confirmOrder.getTickets(), ConfirmOrderTicketReq.class));
+        req.setImageCode("");
+        req.setImageCodeToken("");
+        req.setLogId("");
+
+
+        confirmOrder.setStatus(ConfirmOrderStatusEnum.PENDING.getCode());
+        updateStatus(confirmOrder);
+
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         String start = req.getStart();
         String end = req.getEnd();
         List<ConfirmOrderTicketReq> tickets = req.getTickets();
-
-//        从数据库里面查出订单
-        ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
-        confirmOrderExample.setOrderByClause("id asc");
-        ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
-        criteria.andDateEqualTo(req.getDate())
-                .andTrainCodeEqualTo(req.getTrainCode())
-                .andMemberIdEqualTo(req.getMemberId())
-                .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
-//        查询大字段selectByExampleWithBLOBs
-        List<ConfirmOrder> list = confirmOrderMapper.selectByExampleWithBLOBs(confirmOrderExample);
-        ConfirmOrder confirmOrder;
-        if (CollUtil.isEmpty(list)) {
-            Log.info("找不到初始订单，结束");
-            return;
-        } else {
-            Log.info("本次处理{}条确认订单",list.size());
-            confirmOrder = list.get(0);
-        }
-
 
 //        查处余票记录
         DailyTrainTicket dailyTrainTicket =
@@ -224,6 +260,19 @@ public class ConfirmOrderService {
             Log.error("购买失败");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
+    }
+
+    /**
+     * 更新状态，直接更新到库
+     *
+     * @param confirmOrder
+     */
+    public void updateStatus(ConfirmOrder confirmOrder) {
+        ConfirmOrder confirmOrderForUpdate = new ConfirmOrder();
+        confirmOrderForUpdate.setId(confirmOrder.getId());
+        confirmOrderForUpdate.setUpdateTime(new Date());
+        confirmOrderForUpdate.setStatus(confirmOrder.getStatus());
+        confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);
     }
 
     /**
@@ -425,4 +474,5 @@ public class ConfirmOrderService {
             }
         }
     }
+
 }
