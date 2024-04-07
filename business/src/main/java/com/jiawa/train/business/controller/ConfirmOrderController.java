@@ -53,7 +53,7 @@ public class ConfirmOrderController {
                 redisTemplate.delete(imageCodeToken);
             }
         }
-        beforeConfirmOrderService.beforeDoConfirm(req);
-        return AxiosResult.success("");
+        Long id = beforeConfirmOrderService.beforeDoConfirm(req);
+        return AxiosResult.success(String.valueOf(id));
     }
 }

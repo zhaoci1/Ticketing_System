@@ -35,7 +35,7 @@ public class BeforeConfirmOrderService {
     @Resource
     private ConfirmOrderMapper confirmOrderMapper;
 
-    public void beforeDoConfirm(ConfirmOrderDoReq req) {
+    public Long beforeDoConfirm(ConfirmOrderDoReq req) {
         req.setMemberId(LoginMemberContext.getId());
 //        检验令牌余量
         boolean validSkToen = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMember().getId());
@@ -77,5 +77,6 @@ public class BeforeConfirmOrderService {
         Log.info("排队购票，发送mq开始，消息：{}", reqJson);
         rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(), reqJson);
         Log.info("排队购票，发送mq结束");
+        return confirmOrder.getId();
     }
 }

@@ -130,6 +130,14 @@
         </div>
       </div>
     </a-modal>
+    <a-modal
+      v-model:visible="lineModalVisible"
+      :title="'排队购票'"
+      :footer="null"
+      style="top: 50px; width: 400px"
+    >
+      <div class="book-line"><loading-outlined />确认订单：{{confirmOrderId}}系统正在处理中</div>
+    </a-modal>
   </div>
 </template>
 
@@ -154,6 +162,9 @@ export default defineComponent({
     const imageCodeToken = ref();
     const imageCodeSrc = ref();
     const imageCode = ref();
+
+    const lineModalVisible = ref(false);
+    const confirmOrderId = ref();
 
     const dailyTrainTicket = SessionStorage.get("dailyTrainTicket") || {};
     const SEAT_TYPE = window.SEAT_TYPE;
@@ -286,6 +297,10 @@ export default defineComponent({
         if (res.code != 200) {
           message.error(res.message);
         } else {
+          visible.value = false;
+          lineModalVisible.value = true;
+          imageCodeModalVisible.value = false;
+          confirmOrderId.value = res.data;
           message.success(res.message);
         }
       });
@@ -386,6 +401,8 @@ export default defineComponent({
       handleQueryPassenger();
     });
     return {
+      confirmOrderId,
+      lineModalVisible,
       showFirstImageCodeModal,
       imageCodeModalVisible,
       imageCodeToken,
