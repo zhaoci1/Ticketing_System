@@ -170,12 +170,6 @@ public class ConfirmOrderService {
     //        保存确认订单表，状态初始
     private void sell(ConfirmOrder confirmOrder) {
 //        演示排队效果，增加延时
-        try{
-            Thread.sleep(200);
-        }catch (InterruptedException e){
-            throw new RuntimeException(e);
-        }
-
         ConfirmOrderDoReq req = new ConfirmOrderDoReq();
         req.setMemberId(confirmOrder.getMemberId());
         req.setDate(confirmOrder.getDate());
@@ -511,7 +505,9 @@ public class ConfirmOrderService {
                     .andStatusEqualTo(ConfirmOrderStatusEnum.PENDING.getCode());
 //            查询数量，查出来有几条，当前订单就排在第几位
             return Math.toIntExact(confirmOrderMapper.countByExample(confirmOrderExample));
+        }else{
+            return result;
         }
-        return result;
+
     }
 }
