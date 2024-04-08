@@ -34,21 +34,19 @@ public class ConfirmOrderController {
 
     @PostMapping("/do")
     public AxiosResult doConfirm(@Valid @RequestBody ConfirmOrderDoReq req) {
-        if (!env.equals("dev")) {
-            String imageCodeToken = req.getImageCodeToken();
-            String imageCode = req.getImageCode();
-            String imageCodeRedis = redisTemplate.opsForValue().get(imageCodeToken);
-            Log.info("从redis中获取到验证码：{}", imageCodeRedis);
+        String imageCodeToken = req.getImageCodeToken();
+        String imageCode = req.getImageCode();
+        String imageCodeRedis = redisTemplate.opsForValue().get(imageCodeToken);
+        Log.info("从redis中获取到验证码：{}", imageCodeRedis);
 
-            if (ObjectUtil.isEmpty(imageCodeRedis)) {
-                return AxiosResult.error("验证码已过期");
-            }
+        if (ObjectUtil.isEmpty(imageCodeRedis)) {
+            return AxiosResult.error("验证码已过期");
+        }
 
-            if (!imageCodeRedis.equalsIgnoreCase(imageCode)) {
-                return AxiosResult.error("验证码不正确");
-            } else {
-                redisTemplate.delete(imageCodeToken);
-            }
+        if (!imageCodeRedis.equalsIgnoreCase(imageCode)) {
+            return AxiosResult.error("验证码不正确");
+        } else {
+            redisTemplate.delete(imageCodeToken);
         }
         Long id = beforeConfirmOrderService.beforeDoConfirm(req);
         return AxiosResult.success(String.valueOf(id));

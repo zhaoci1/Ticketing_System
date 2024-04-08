@@ -6,7 +6,7 @@ import router from "@/router";
 let myAxios = axios.create({
   // 设置统一请求路径前缀
   baseURL: process.env.VUE_APP_SERVER,
-  timeout: 3000,
+  // timeout: 3000,
   headers: { "X-Custom-Header": "foobar" },
   ContentType: "application/json",
 });
