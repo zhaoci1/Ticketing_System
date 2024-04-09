@@ -13,6 +13,14 @@ let Axios = {
       },
     });
   },
+  queryTrain(obj) {
+    return myAxios.get(
+      "business/daily_train_station_member/query-by-train-code",
+      {
+        params:obj
+      }
+    );
+  },
 };
 
 export default Axios;

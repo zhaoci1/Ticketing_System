@@ -56,4 +56,8 @@ public class ConfirmOrderController {
         Integer count = confirmOrderService.queryLineCount(id);
         return AxiosResult.success(count);
     }
+    @GetMapping("/cancel/{id}")
+    public AxiosResult<Integer> cancel(@PathVariable Long id) {
+        return AxiosResult.success(confirmOrderService.cancel(id));
+    }
 }

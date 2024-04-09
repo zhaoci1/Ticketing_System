@@ -24,6 +24,7 @@ import com.jiawa.train.business.req.ConfirmOrderTicketReq;
 import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import com.jiawa.train.common.exception.BusinessException;
 import com.jiawa.train.common.exception.BusinessExceptionEnum;
+import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -34,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -508,6 +511,20 @@ public class ConfirmOrderService {
         }else{
             return result;
         }
-
     }
+    /**
+     * 将订单状态改为取消
+     * @param id
+     * @return
+     */
+    public Integer cancel(Long id) {
+        ConfirmOrderExample example = new ConfirmOrderExample();
+        ConfirmOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(id)
+                .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+        ConfirmOrder confirmOrder = new ConfirmOrder();
+        confirmOrder.setStatus(ConfirmOrderStatusEnum.CANCEL.getCode());
+        return confirmOrderMapper.updateByExampleSelective(confirmOrder,example);
+    }
+
 }

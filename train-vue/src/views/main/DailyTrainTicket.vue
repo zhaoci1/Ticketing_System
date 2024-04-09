@@ -70,10 +70,49 @@
           <div v-else>--</div>
         </template>
         <template v-else-if="column.dataIndex === 'operate'">
-          <a-button type="primary" @click="scheduled(record)">预定</a-button>
+          <a-button
+            type="primary"
+            @click="scheduled(record)"
+            style="margin-right: 10px"
+            >预定</a-button
+          >
+          <a-button type="primary" @click="showStation(record)"
+            >途径车站</a-button
+          >
         </template>
       </template>
     </a-table>
+    <a-modal
+      style="top: 30px"
+      v-model:visible="stationsVisible"
+      :title="null"
+      :footer="null"
+      :closable="false"
+    >
+      <a-table :data-source="stations" :pagination="false">
+        <a-table-column key="index" title="站序" data-index="index" />
+        <a-table-column key="name" title="站名" data-index="name" />
+        <a-table-column key="inTime" title="进站时间" data-index="inTime">
+          <template #default="{ record }">
+            {{ record.index === 0 ? "-" : record.inTime }}
+          </template>
+        </a-table-column>
+        <a-table-column key="outTime" title="出站时间" data-index="outTime">
+          <template #default="{ record }">
+            {{ record.index === stations.length - 1 ? "-" : record.outTime }}
+          </template>
+        </a-table-column>
+        <a-table-column key="stopTime" title="停站时长" data-index="stopTime">
+          <template #default="{ record }">
+            {{
+              record.index === 0 || record.index === stations.length - 1
+                ? "-"
+                : record.stopTime
+            }}
+          </template>
+        </a-table-column>
+      </a-table>
+    </a-modal>
     <a-modal
       v-model:visible="visible"
       title="余票信息"
@@ -200,6 +239,8 @@ export default defineComponent({
       pageSize: 10,
     });
     const dailyTrainTickets = ref([]);
+    const stations = ref([]);
+    const stationsVisible = ref(false);
 
     const columns = [
       {
@@ -262,6 +303,12 @@ export default defineComponent({
           message.success("删除失败");
         }
       });
+    };
+    const showStation = (value) => {
+      Axios.queryTrain(value).then(res=>{
+        stations.value = res.data
+      })
+      stationsVisible.value = true;
     };
     const calDuration = (startTime, endTime) => {
       let diff = dayjs(endTime, "HH:mm:ss").diff(
@@ -332,6 +379,7 @@ export default defineComponent({
       });
     });
     return {
+      showStation,
       dailyTrainTicket,
       visible,
       dailyTrainTickets,
@@ -347,6 +395,8 @@ export default defineComponent({
       param,
       calDuration,
       scheduled,
+      stations,
+      stationsVisible,
     };
   },
 });

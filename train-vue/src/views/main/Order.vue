@@ -149,6 +149,7 @@
         </div>
       </div>
       <br />
+      <a-button type="danger" @click="onCancelOrder">取消购票</a-button>
     </a-modal>
   </div>
 </template>
@@ -352,6 +353,16 @@ export default defineComponent({
         });
       }, 500);
     };
+    const onCancelOrder = ()=>{
+      Axios.cancel(confirmOrderId.value).then(res=>{
+        console.log(res);
+        if(res.code==200){
+          clearInterval(queryLineCountInterval);
+          imageCodeModalVisible.value = false;
+        }
+      })
+      
+    }
     const showFirstImageCodeModal = () => {
       loadImageCode();
       imageCodeModalVisible.value = true;
@@ -448,6 +459,7 @@ export default defineComponent({
       handleQueryPassenger();
     });
     return {
+      onCancelOrder,
       confirmOrderLineCount,
       confirmOrderId,
       lineModalVisible,

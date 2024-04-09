@@ -7,7 +7,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
+import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.enums.SeatColEnum;
+import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import com.jiawa.train.business.mapper.DailyTrainCarriageMapper;
@@ -30,6 +32,9 @@ public class DailyTrainCarriageService {
 
     @Resource
     private TrainCarriageService trainCarriageService;
+
+    @Resource
+    private ConfirmOrderMapper confirmOrderMapper;
 
     private static final Logger Log = LoggerFactory.getLogger(DailyTrainCarriageService.class);
 
@@ -139,4 +144,6 @@ public class DailyTrainCarriageService {
         return dailyTrainCarriageMapper.selectByExample(example);
 
     }
+
+
 }
