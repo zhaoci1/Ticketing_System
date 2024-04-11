@@ -76,6 +76,22 @@
             style="margin-right: 10px"
             >预定</a-button
           >
+          <router-link
+            :to="{
+              path: '/seat',
+              query: {
+                date: record.date,
+                trainCode: record.trainCode,
+                start: record.start,
+                startIndex: record.startIndex,
+                end: record.end,
+                endIndex: record.endIndex,
+              },
+            }"
+             style="margin-right: 10px"
+          >
+            <a-button type="primary">座位销售图</a-button>
+          </router-link>
           <a-button type="primary" @click="showStation(record)"
             >途径车站</a-button
           >
@@ -305,9 +321,9 @@ export default defineComponent({
       });
     };
     const showStation = (value) => {
-      Axios.queryTrain(value).then(res=>{
-        stations.value = res.data
-      })
+      Axios.queryTrain(value).then((res) => {
+        stations.value = res.data;
+      });
       stationsVisible.value = true;
     };
     const calDuration = (startTime, endTime) => {

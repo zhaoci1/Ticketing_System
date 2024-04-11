@@ -32,6 +32,10 @@ const routes = [
       path:"order",
       component: () =>import( "../views/main/Order.vue"),
     },
+    {
+      path:"seat",
+      component: () =>import( "../views/main/Seat.vue"),
+    },
     ]
   },
   {

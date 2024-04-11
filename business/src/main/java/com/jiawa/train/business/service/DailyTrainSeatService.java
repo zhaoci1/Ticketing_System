@@ -3,17 +3,23 @@ package com.jiawa.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.*;
-import com.jiawa.train.common.resp.PageResp;
-import com.jiawa.train.common.util.SnowUtil;
+import com.jiawa.train.business.domain.DailyTrainSeat;
+import com.jiawa.train.business.domain.DailyTrainSeatExample;
+import com.jiawa.train.business.domain.TrainSeat;
+import com.jiawa.train.business.domain.TrainStation;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.req.DailyTrainSeatQuery;
 import com.jiawa.train.business.req.DailyTrainSeatReq;
+import com.jiawa.train.business.req.SeatSellReq;
 import com.jiawa.train.business.resp.DailyTrainSeatQueryResp;
+import com.jiawa.train.business.resp.SeatSellResp;
+import com.jiawa.train.common.resp.PageResp;
+import com.jiawa.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,5 +168,22 @@ public class DailyTrainSeatService {
                 .andTrainCodeEqualTo(trainCode)
                 .andCarriageIndexEqualTo(carriageIndex);
         return dailyTrainSeatMapper.selectByExample(example);
+    }
+
+    /**
+     * 查询某日某车次的所有座位
+     * @param req
+     * @return
+     */
+    public List<SeatSellResp> querySeatSell(SeatSellReq req){
+        Date date = req.getDate();
+        String trainCode = req.getTrainCode();
+        Log.info("查询日期【{}】车次【{}】的座位销售信息", DateUtil.formatDate(date),trainCode);
+        DailyTrainSeatExample example = new DailyTrainSeatExample();
+        example.setOrderByClause("`carriage_index` asc,carriage_seat_index");
+        example.createCriteria()
+                .andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode);
+        return BeanUtil.copyToList(dailyTrainSeatMapper.selectByExample(example), SeatSellResp.class);
     }
 }
