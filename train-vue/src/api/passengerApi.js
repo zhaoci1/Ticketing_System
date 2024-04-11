@@ -25,6 +25,10 @@ let Axios = {
   queryLineCount(id) {
     return myAxios.get("business/confirm-order/query-line-count/" + id);
   },
+  cancel(id) {
+    return myAxios.get("business/confirm-order/cancel/" + id);
+  },
+
 };
 
 export default Axios;

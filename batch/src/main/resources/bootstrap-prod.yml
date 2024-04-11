@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.29.136.29:8848 #nacos启动的地址
+        namespace: train

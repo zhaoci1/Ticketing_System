@@ -1,13 +1,11 @@
 package com.jiawa.train.business.controller;
 
-import com.jiawa.train.common.context.LoginMemberContext;
-import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.business.req.DailyTrainCarriageQuery;
 import com.jiawa.train.business.req.DailyTrainCarriageReq;
 import com.jiawa.train.business.service.DailyTrainCarriageService;
+import com.jiawa.train.common.resp.AxiosResult;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,7 +27,6 @@ public class DailyTrainCarriageController {
 
     @DeleteMapping("/delete/{id}")
     public AxiosResult deleteDailyTrainCarriage(@PathVariable Long id) {
-
         return AxiosResult.success(dailyTrainCarriageService.delete(id)>=1);
     }
 }

@@ -72,10 +72,6 @@ public class BeforeConfirmOrderService {
         confirmOrderMQDto.setTrainCode(req.getTrainCode());
         confirmOrderMQDto.setLogId(MDC.get("LOG_ID"));
 
-//        String reqJson = JSON.toJSONString(confirmOrderMQDto);
-//        Log.info("排队购票，发送mq开始，消息：{}", reqJson);
-//        rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(), reqJson);
-//        Log.info("排队购票，发送mq结束");
         confirmOrderService.doConfirm(confirmOrderMQDto);
         return confirmOrder.getId();
     }

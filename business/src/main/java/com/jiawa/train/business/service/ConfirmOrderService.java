@@ -24,6 +24,7 @@ import com.jiawa.train.business.req.ConfirmOrderTicketReq;
 import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import com.jiawa.train.common.exception.BusinessException;
 import com.jiawa.train.common.exception.BusinessExceptionEnum;
+import com.jiawa.train.common.resp.AxiosResult;
 import com.jiawa.train.common.resp.PageResp;
 import com.jiawa.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -34,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -170,12 +173,6 @@ public class ConfirmOrderService {
     //        保存确认订单表，状态初始
     private void sell(ConfirmOrder confirmOrder) {
 //        演示排队效果，增加延时
-        try{
-            Thread.sleep(200);
-        }catch (InterruptedException e){
-            throw new RuntimeException(e);
-        }
-
         ConfirmOrderDoReq req = new ConfirmOrderDoReq();
         req.setMemberId(confirmOrder.getMemberId());
         req.setDate(confirmOrder.getDate());
@@ -511,7 +508,23 @@ public class ConfirmOrderService {
                     .andStatusEqualTo(ConfirmOrderStatusEnum.PENDING.getCode());
 //            查询数量，查出来有几条，当前订单就排在第几位
             return Math.toIntExact(confirmOrderMapper.countByExample(confirmOrderExample));
+        }else{
+            return result;
         }
-        return result;
     }
+    /**
+     * 将订单状态改为取消
+     * @param id
+     * @return
+     */
+    public Integer cancel(Long id) {
+        ConfirmOrderExample example = new ConfirmOrderExample();
+        ConfirmOrderExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(id)
+                .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+        ConfirmOrder confirmOrder = new ConfirmOrder();
+        confirmOrder.setStatus(ConfirmOrderStatusEnum.CANCEL.getCode());
+        return confirmOrderMapper.updateByExampleSelective(confirmOrder,example);
+    }
+
 }

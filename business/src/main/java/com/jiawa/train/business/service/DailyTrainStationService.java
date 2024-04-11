@@ -4,16 +4,17 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.*;
-import com.jiawa.train.common.resp.PageResp;
-import com.jiawa.train.common.util.SnowUtil;
+import com.jiawa.train.business.domain.DailyTrainStation;
+import com.jiawa.train.business.domain.DailyTrainStationExample;
+import com.jiawa.train.business.domain.TrainStation;
 import com.jiawa.train.business.mapper.DailyTrainStationMapper;
 import com.jiawa.train.business.req.DailyTrainStationQuery;
 import com.jiawa.train.business.req.DailyTrainStationReq;
 import com.jiawa.train.business.resp.DailyTrainStationQueryResp;
+import com.jiawa.train.common.resp.PageResp;
+import com.jiawa.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,5 +124,12 @@ public class DailyTrainStationService {
         example.createCriteria().andTrainCodeEqualTo(trainCode)
                 .andDateEqualTo(date);
         return dailyTrainStationMapper.countByExample(example);
+    }
+    public List<DailyTrainStationQueryResp> queryByTrain(Date date, String trainCode) {
+        DailyTrainStationExample dailyTrainStationExample = new DailyTrainStationExample();
+        dailyTrainStationExample.setOrderByClause("`index` asc");
+        dailyTrainStationExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+        List<DailyTrainStation> list = dailyTrainStationMapper.selectByExample(dailyTrainStationExample);
+        return BeanUtil.copyToList(list, DailyTrainStationQueryResp.class);
     }
 }
